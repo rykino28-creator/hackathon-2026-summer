@@ -36,7 +36,7 @@
 
                 <!-- 商品ピンに data-product-id を使用 -->
                 <div class="item-pin" data-product-id="pan" style="top: 36.7%; left: 66.6%;"></div>
-                <div class="item-pin" data-product-id="rack" style="top: 29.8%; left: 50.8%;"></div>
+                <div class="item-pin" data-product-id="rack" style="top: 34.4%; left: 3.5%;"></div>
                 <div class="item-pin" data-product-id="kettle" style="top: 71.2%; left: 64.5%;"></div>
             </div>
         </main>
@@ -115,6 +115,7 @@
             const modalImg = modal.querySelector('.product-img');
             const modalName = modal.querySelector('.product-name');
             const modalPrice = modal.querySelector('.product-price');
+            const buyButton = modal.querySelector('.cart-add-btn');
 
             let productsData = {};
 
@@ -142,6 +143,10 @@
                         modalImg.src = product.image;
                         modalName.textContent = product.name;
                         modalPrice.innerHTML = `${product.price}<span>（税込）</span>`;
+                        buyButton.onclick = () => {
+                            // target="_blank" と同じように新しいタブで本物のニトリネットを開く
+                            window.open(product.url, '_blank');
+                        };
                     }
 
                     // モーダルを開く
