@@ -23,10 +23,18 @@
         <main class="detail-content">
             <!-- ピンを配置するための基準となる枠 -->
             <div class="image-wrap">
-                <!-- 詳細用の画像（アスペクト比を維持して全幅表示） -->
-                <img src="./images/kitchen1.jpg" alt="キッチン詳細画像" class="detail-image">
+                <!-- 詳細用の画像（srcを空にして、直後のスクリプトで即座に設定） -->
+                <img id="detailImage" alt="キッチン詳細画像" class="detail-image">
+                <script>
+                    // 画面の読み込み完了を待たずに、最速で画像URLを適用する
+                    (function () {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const targetImg = urlParams.get('img') || 'kitchen1.jpg'; // パラメータがない場合はkitchen1にする
+                        document.getElementById('detailImage').src = `./images/${targetImg}`;
+                    })();
+                </script>
 
-
+                <!-- 商品ピンに data-product-id を使用 -->
                 <div class="item-pin" data-product-id="pan" style="top: 36.7%; left: 66.6%;"></div>
                 <div class="item-pin" data-product-id="rack" style="top: 29.8%; left: 50.8%;"></div>
                 <div class="item-pin" data-product-id="kettle" style="top: 71.2%; left: 64.5%;"></div>
@@ -69,6 +77,12 @@
     <script>
         // async を追加して、非同期処理（JSONの読み込み）ができるようにしています
         document.addEventListener('DOMContentLoaded', async () => {
+
+
+
+
+
+
 
             // -----------------------------------------------------------
             // 開発用・座標取得ツール（元のまま残しています）
