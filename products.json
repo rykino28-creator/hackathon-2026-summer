@@ -1,0 +1,17 @@
+{
+    "pan": {
+        "name": "IH・ガス火 軽量フライパン",
+        "price": "1,990円",
+        "image": "./images/kitchen1.jpg"
+    },
+    "rack": {
+        "name": "木製スパイスラック",
+        "price": "2,490円",
+        "image": "./images/kitchen1.jpg"
+    },
+    "kettle": {
+        "name": "ホーローケトル 2.0L",
+        "price": "3,490円",
+        "image": "./images/kitchen1.jpg"
+    }
+}
