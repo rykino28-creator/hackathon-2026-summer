@@ -1,0 +1,358 @@
+/* 全体のリセットと基本設定 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f0f0f0;
+    /* PC画面の余白は薄いグレー */
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    color: #333;
+}
+
+/* スマホ枠のコンテナ（最大480pxで中央寄せ） */
+.app-container {
+    max-width: 480px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    min-height: 100vh;
+    position: relative;
+    padding-bottom: 60px;
+    /* ボトムナビゲーションの高さ分の余白 */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    /* 枠を少し浮かせる */
+}
+
+/* -----------------------------
+   ヘッダーエリア
+----------------------------- */
+.header {
+    padding: 16px 16px 0;
+    position: sticky;
+    top: 0;
+    background-color: #ffffff;
+    z-index: 10;
+}
+
+/* 検索窓 */
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+}
+
+.search-icon {
+    color: #888;
+    margin-right: 12px;
+}
+
+.search-bar input {
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    width: 100%;
+    color: #333;
+    outline: none;
+}
+
+/* タブ */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+}
+
+/* アクティブなタブ（みんなのキッチン） */
+.tab.active {
+    font-weight: bold;
+    color: #333;
+    border-bottom: 2px solid #333;
+    /* 黒い太線 */
+}
+
+/* -----------------------------
+   コンテンツエリア（画像グリッド）
+----------------------------- */
+.content {
+    width: 100%;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* 左右2列に均等分割 */
+    gap: 2px;
+    /* 画像と画像の間の隙間（インスタ風に細め） */
+}
+
+.grid-item {
+    display: block;
+    width: 100%;
+    /* CSSの魔法：画像を必ず正方形(1:1)にする */
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+}
+
+.grid-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* 画像の真ん中を基準にトリミング */
+    display: block;
+    transition: opacity 0.2s;
+}
+
+/* ホバー（タップ）時に少し暗くする演出 */
+.grid-item:active img {
+    opacity: 0.7;
+}
+
+/* -----------------------------
+   ボトムナビゲーション
+----------------------------- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    max-width: 480px;
+    /* .app-containerと同じ最大幅にする */
+    height: 60px;
+    background-color: #ffffff;
+    border-top: 1px solid #eeeeee;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 100;
+}
+
+.nav-item {
+    color: #333;
+    font-size: 22px;
+    text-decoration: none;
+}
+
+/* アイコンにニトリカラーを取り入れたい場合はここの色を変更 */
+/* .nav-item.active { color: #009E96; } */
+
+
+
+
+/* ==========================================
+   画像詳細画面 (detail.html) のスタイル
+========================================== */
+
+/* ヘッダー（戻るボタン） */
+.detail-header {
+    padding: 16px;
+    background-color: #ffffff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.back-button {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    /* アイコンと文字の隙間 */
+}
+
+/* 画像とピンの親要素（ピンを絶対配置するための基準点にする） */
+.image-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.detail-image {
+    width: 100%;
+    height: auto;
+    /* 元の画像比率を維持 */
+    display: block;
+}
+
+/* 商品ピン（ニトリカラーの半透明） */
+.item-pin {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    background-color: rgba(0, 158, 150, 0.7);
+    /* ニトリカラー #009E96 の半透明 */
+    border: 2px solid #ffffff;
+    /* 白い枠線 */
+    border-radius: 50%;
+    /* 正円にする */
+    /* 中心を基準に配置するための魔法のコード */
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    /* 呼吸するようなアニメーション */
+    animation: pulse 2s infinite;
+}
+
+/* アニメーションの定義 */
+@keyframes pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        box-shadow: 0 4px 10px rgba(0, 158, 150, 0.4);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* 画面下部のアクションボタンエリア */
+.bottom-action {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    max-width: 480px;
+    background-color: #ffffff;
+    padding: 16px;
+    border-top: 1px solid #eeeeee;
+    z-index: 100;
+}
+
+/* まとめてカートに入れるボタン */
+.cart-add-btn {
+    width: 100%;
+    background-color: #009E96;
+    /* ニトリカラー */
+    color: #ffffff;
+    border: none;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+
+.cart-add-btn:active {
+    background-color: #007a74;
+    /* 押した時に少し暗くする */
+}
+
+
+
+
+
+/* ==========================================
+   ポップアップ（ボトムシート）のスタイル
+========================================== */
+
+/* 背景を暗くするオーバーレイ */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 200;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ボトムシート本体 */
+.product-modal {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    /* 初期状態は画面の下(100%)に隠しておく */
+    transform: translateX(-50%) translateY(100%);
+    width: 100%;
+    max-width: 480px;
+    background-color: #ffffff;
+    border-radius: 20px 20px 0 0;
+    /* 上の角だけ丸くする */
+    z-index: 201;
+    padding: 24px 16px;
+    /* 少しバウンドするような気持ちいいアニメーション設定 */
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+.product-modal.active {
+    /* アクティブになったら定位置(0)に戻す */
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ポップアップ内のデザイン */
+.modal-handle {
+    width: 40px;
+    height: 4px;
+    background-color: #e0e0e0;
+    border-radius: 2px;
+    margin: -10px auto 20px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #888;
+    cursor: pointer;
+}
+
+.product-info {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.product-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.product-name {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+/* 価格はニトリっぽい赤色で目立たせる */
+.product-price {
+    font-size: 22px;
+    font-weight: bold;
+    color: #e60012;
+}
+
+.product-price span {
+    font-size: 12px;
+    font-weight: normal;
+    color: #666;
+}
