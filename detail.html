@@ -26,16 +26,14 @@
                 <!-- 詳細用の画像（アスペクト比を維持して全幅表示） -->
                 <img src="./images/kitchen1.jpg" alt="キッチン詳細画像" class="detail-image">
 
-                <!-- 商品ピン（styleで上から〇%、左から〇%という座標を指定） -->
-                <div class="item-pin" style="top: 36.7%; left: 66.6%;"></div>
-                <div class="item-pin" style="top: 29.8%; left: 50.8%;"></div>
-                <div class="item-pin" style="top: 34.1%; left: 3.3%;"> </div>
+
+                <div class="item-pin" data-product-id="pan" style="top: 36.7%; left: 66.6%;"></div>
+                <div class="item-pin" data-product-id="rack" style="top: 29.8%; left: 50.8%;"></div>
+                <div class="item-pin" data-product-id="kettle" style="top: 71.2%; left: 64.5%;"></div>
             </div>
         </main>
 
-        <!-- まとめてカートに入れるボタン（画面下部固定） -->
-
-        <!-- ========== ここから追加（ポップアップ画面） ========== -->
+        <!-- ========== ポップアップ画面 ========== -->
         <!-- 背景を暗くするフィルター -->
         <div class="overlay" id="overlay"></div>
 
@@ -47,7 +45,7 @@
             <!-- 閉じるボタン -->
             <button class="close-btn" id="closeBtn"><i class="fa-solid fa-xmark"></i></button>
 
-            <!-- 商品情報の中身 -->
+            <!-- 商品情報の中身（ここはJSで上書きされますが、初期値として残しておきます） -->
             <div class="product-info">
                 <img src="./images/kitchen1.jpg" alt="商品画像" class="product-img">
                 <div class="product-details">
@@ -58,8 +56,9 @@
 
             <button class="cart-add-btn">カートに入れる</button>
         </div>
-        <!-- ========== ここまで追加 ========== -->
+        <!-- ==================================== -->
 
+        <!-- まとめてカートに入れるボタン（画面下部固定） -->
         <div class="bottom-action">
             <button class="cart-add-btn">この写真のアイテムをまとめてカートに入れる</button>
         </div>
@@ -67,46 +66,71 @@
     </div>
 
 
-
-
-
-
-
     <script>
-        // 開発用・座標取得ツール（本番では消してもOK）
-        document.addEventListener('DOMContentLoaded', () => {
+        // async を追加して、非同期処理（JSONの読み込み）ができるようにしています
+        document.addEventListener('DOMContentLoaded', async () => {
+
+            // -----------------------------------------------------------
+            // 開発用・座標取得ツール（元のまま残しています）
+            // -----------------------------------------------------------
             const image = document.querySelector('.detail-image');
 
             image.addEventListener('click', (e) => {
-                // 画像の実際のサイズと画面上の位置を取得
                 const rect = image.getBoundingClientRect();
-
-                // クリックした場所のX座標、Y座標を計算
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-
-                // パーセント（%）に変換して、小数点第1位で丸める
                 const percentX = (x / rect.width * 100).toFixed(1);
                 const percentY = (y / rect.height * 100).toFixed(1);
 
-                // そのままコピペできるHTMLコードを作成
-                const pinCode = `<div class="item-pin" style="top: ${percentY}%; left: ${percentX}%;"></div>`;
+                // コピーするコードにも data-product-id が入るように少し改良しました
+                const pinCode = `<div class="item-pin" data-product-id="IDを入力" style="top: ${percentY}%; left: ${percentX}%;"></div>`;
 
-                // アラートで表示
                 alert(`【座標を取得しました！】\n\n上から (top): ${percentY}%\n左から (left): ${percentX}%\n\n▼以下のコードをコピーしてHTMLに貼り付けてください▼\n${pinCode}`);
-
-                // コンソールにも出力（F12キーで開く開発者ツールで見れます）
                 console.log(pinCode);
             });
-            // ========== ここから追加（ポップアップの開閉処理） ==========
+
+            // -----------------------------------------------------------
+            // ② JSONの読み込みとポップアップの開閉処理
+            // -----------------------------------------------------------
             const pins = document.querySelectorAll('.item-pin');
             const modal = document.getElementById('productModal');
             const overlay = document.getElementById('overlay');
             const closeBtn = document.getElementById('closeBtn');
 
+            // モーダル内の要素を取得
+            const modalImg = modal.querySelector('.product-img');
+            const modalName = modal.querySelector('.product-name');
+            const modalPrice = modal.querySelector('.product-price');
+
+            let productsData = {};
+
+            // JSON データを取得する
+            try {
+                const response = await fetch('products.json');
+                productsData = await response.json();
+            } catch (error) {
+                console.error('JSONデータの読み込みに失敗しました:', error);
+            }
+
             // 全てのピンに対して、クリックされたらポップアップを開く設定をする
             pins.forEach(pin => {
-                pin.addEventListener('click', () => {
+                pin.addEventListener('click', (e) => {
+                    // 追加：ピンを押した時に、背後の画像のクリック判定（座標取得ツール）が反応しないようにブロックします
+                    e.stopPropagation();
+
+                    // どのピンが押されたか（pan, rack, kettle 等）を取得
+                    const productId = pin.getAttribute('data-product-id');
+                    // 取得したIDを使ってJSONデータから商品情報を引き出す
+                    const product = productsData[productId];
+
+                    if (product) {
+                        // JSONから取得したデータをモーダルのHTMLに流し込む
+                        modalImg.src = product.image;
+                        modalName.textContent = product.name;
+                        modalPrice.innerHTML = `${product.price}<span>（税込）</span>`;
+                    }
+
+                    // モーダルを開く
                     modal.classList.add('active');
                     overlay.classList.add('active');
                 });
@@ -118,20 +142,10 @@
                 overlay.classList.remove('active');
             };
 
-            // 閉じるボタンか、暗い背景を押したら閉じる
             closeBtn.addEventListener('click', closeModal);
             overlay.addEventListener('click', closeModal);
-            // ========== ここまで追加 ==========
         });
     </script>
-
-
-
-
-
-
-
-
 </body>
 
 </html>
