@@ -1,17 +1,20 @@
 {
     "pan": {
-        "name": "IH・ガス火 軽量フライパン",
-        "price": "1,990円",
-        "image": "./images/kitchen1.jpg"
+        "name": "IH・ガス火 超軽量 超深型フライパン",
+        "price": "2,490",
+        "image": "./images/kitchen1.jpg",
+        "url": "https://www.nitori-net.jp/ec/product/2111200015577s/"
     },
     "rack": {
         "name": "木製スパイスラック",
-        "price": "2,490円",
-        "image": "./images/kitchen1.jpg"
+        "price": "1,990円",
+        "image": "./images/kitchen1.jpg",
+        "url": "https://www.nitori-net.jp/ec/product/2111200000535s/"
     },
     "kettle": {
         "name": "ホーローケトル 2.0L",
-        "price": "3,490円",
-        "image": "./images/kitchen1.jpg"
+        "price": "2,290円",
+        "image": "./images/kitchen1.jpg",
+        "url": "https://www.nitori-net.jp/ec/product/5894152s/"
     }
 }
