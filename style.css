@@ -356,3 +356,33 @@ body {
     font-weight: normal;
     color: #666;
 }
+
+
+/* ==========================================
+   投稿画面 (upload.html) のスタイル
+========================================== */
+.upload-btn {
+    display: block;
+    width: 100%;
+    padding: 60px 20px;
+    background-color: #f9f9f9;
+    border: 2px dashed #cccccc;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #666666;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.upload-btn i {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 16px;
+    color: #aaaaaa;
+}
+
+.upload-btn:active {
+    background-color: #eeeeee;
+}
