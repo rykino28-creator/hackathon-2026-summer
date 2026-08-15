@@ -18,10 +18,12 @@
         <!-- ヘッダーエリア -->
         <header class="header">
             <!-- 検索窓 -->
-            <div class="search-bar">
+            <!-- 検索窓をformタグにして、実際に入力・検索できるようにする -->
+            <form class="search-bar" action="index.html" method="GET">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" value="フライパン" readonly>
-            </div>
+                <!-- name="q" をつけることで、検索時にURLが「?q=入力文字」に変わります -->
+                <input type="text" name="q" id="searchInput" placeholder="アイテムを検索...">
+            </form>
 
             <!-- タブ -->
             <div class="tabs">
@@ -32,19 +34,9 @@
 
         <!-- コンテンツエリア（画像グリッド） -->
         <main class="content">
-            <div class="image-grid">
-                <!-- 画像1 (クリックで detail.html へ遷移) -->
-                <a href="detail.html?img=kitchen1.jpg" class="grid-item">
-                    <img src="./images/kitchen1.jpg" alt="キッチン画像1">
-                </a>
-                <!-- 画像2 -->
-                <a href="detail.html?img=kitchen2.jpg" class="grid-item">
-                    <img src="./images/kitchen2.jpg" alt="キッチン画像2">
-                </a>
-                <!-- 画像3 -->
-                <a href="detail.html?img=kitchen3.jpg" class="grid-item">
-                    <img src="./images/kitchen3.jpg" alt="キッチン画像3">
-                </a>
+            <!-- ：JSで中身を書き換えるため id="imageGrid" を追加 -->
+            <div class="image-grid" id="imageGrid">
+                <!-- ここはJavaScriptで自動生成されるため空にしておきます -->
             </div>
         </main>
 
@@ -58,6 +50,55 @@
         </nav>
 
     </div>
+
+    <!-- ========== ここから検索機能 ========== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. URLから検索キーワード（?q=〇〇）を取得する
+            const urlParams = new URLSearchParams(window.location.search);
+            // 何も検索されていなければ「フライパン」を初期値にする
+            const query = urlParams.get('q') || 'フライパン';
+
+            // 検索窓に現在のキーワードを入れる
+            document.getElementById('searchInput').value = query;
+
+            // 2. 擬似データベース（検索キーワードと、表示する画像の紐付け）
+            // ※画像ファイル名はお手元のもの（kitchen1.jpgなど）に合わせて変更してください
+            const imageDb = {
+                "フライパン": ["kitchen1.jpg", "kitchen2.jpg", "kitchen3.jpg"],
+                "スパイスラック": ["kitchen3.jpg", "kitchen1.jpg"], // 変化がわかるように順番を入れ替えています
+                "キッチンワゴン": ["kitchen2.jpg", "kitchen4.jpg", "kitchen1.jpg"],
+                "収納": ["kitchen4.jpg", "kitchen3.jpg"]
+            };
+
+            // 3. 検索キーワードに一致する画像リストを探す
+            let imagesToDisplay = [];
+            for (const key in imageDb) {
+                // 入力された文字が含まれていれば、その画像リストを採用
+                if (query.includes(key) || key.includes(query)) {
+                    imagesToDisplay = imageDb[key];
+                    break;
+                }
+            }
+
+            // もし該当するキーワードがなかった場合は、デフォルトの画像を出す
+            if (imagesToDisplay.length === 0) {
+                imagesToDisplay = ["kitchen1.jpg", "kitchen2.jpg"];
+            }
+
+            // 4. 画像グリッドにHTMLを自動で流し込む
+            const imageGrid = document.getElementById('imageGrid');
+            imagesToDisplay.forEach(imgName => {
+                const aTag = document.createElement('a');
+                // detail.html への引継ぎURL
+                aTag.href = `detail.html?img=${imgName}`;
+                aTag.className = 'grid-item';
+                aTag.innerHTML = `<img src="./images/${imgName}" alt="${query}の検索結果">`;
+                imageGrid.appendChild(aTag);
+            });
+        });
+    </script>
+    <!-- ========== ここまで追加 ========== -->
 </body>
 
 </html>
