@@ -21,6 +21,25 @@
             <div class="image-wrap">
                 <img id="detailImage" alt="キッチン詳細画像" class="detail-image">
             </div>
+
+            <div class="post-details">
+                <section class="related-products" aria-labelledby="relatedProductsTitle">
+                    <h2 id="relatedProductsTitle">写真に写っている商品</h2>
+                    <div class="product-strip" id="relatedProducts"></div>
+                </section>
+
+                <button id="detailFavoriteButton" class="detail-favorite-button" type="button"></button>
+
+                <section class="post-tags" aria-labelledby="postTagsTitle">
+                    <h2 id="postTagsTitle">この投稿のタグ</h2>
+                    <div class="tag-list" id="postTags"></div>
+                </section>
+
+                <section class="post-description" aria-labelledby="postDescriptionTitle">
+                    <h2 id="postDescriptionTitle">投稿者からの説明</h2>
+                    <p id="postDescription"></p>
+                </section>
+            </div>
         </main>
 
         <div class="overlay" id="overlay"></div>
@@ -32,7 +51,7 @@
             </button>
 
             <div class="product-info">
-                <img src="./images/kitchen1.jpg" alt="商品画像" class="product-img">
+                <img src="./images/item-temp-thumbnail.png" alt="商品画像" class="product-img">
                 <div class="product-details">
                     <h3 class="product-name">商品名</h3>
                     <p class="product-price">価格<span>（税込）</span></p>

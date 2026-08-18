@@ -1,0 +1,19 @@
+{
+  "currentUser": {
+    "id": "user-demo",
+    "displayName": "デモユーザー",
+    "avatarInitial": "デ"
+  },
+  "favoritesByUser": [
+    {
+      "userId": "user-demo",
+      "postIds": ["kitchen-2"],
+      "productIds": ["pan", "rack"]
+    },
+    {
+      "userId": "user-sato",
+      "postIds": ["kitchen-3", "kitchen-4"],
+      "productIds": ["kettle"]
+    }
+  ]
+}

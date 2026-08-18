@@ -4,6 +4,17 @@
             "id": "kitchen-1",
             "title": "フライパンのあるキッチン",
             "caption": "使いやすい調理道具をまとめたキッチンです。",
+            "description": "よく使うフライパンと調味料を、調理中にすぐ手が届く位置へまとめました。作業台には必要なものだけを置き、掃除しやすさも意識しています。",
+            "author": {
+                "id": "user-sato",
+                "displayName": "さとう",
+                "avatarInitial": "さ"
+            },
+            "tags": [
+                { "id": "tag-pan", "label": "フライパン" },
+                { "id": "tag-compact", "label": "コンパクトキッチン" },
+                { "id": "tag-show-storage", "label": "見せる収納" }
+            ],
             "image": "./images/kitchen1.jpg",
             "thumbnail": "./images/kitchen1.jpg",
             "keywords": ["フライパン", "スパイスラック", "キッチンワゴン"],
@@ -17,6 +28,16 @@
             "id": "kitchen-2",
             "title": "収納しやすいキッチン",
             "caption": "調理器具を手に取りやすく配置しています。",
+            "description": "壁面を活用してフライパンを吊り下げ、スパイス類は種類ごとにまとめています。調理スペースを広く使えるように配置しました。",
+            "author": {
+                "id": "user-tanaka",
+                "displayName": "たなか",
+                "avatarInitial": "た"
+            },
+            "tags": [
+                { "id": "tag-wall", "label": "壁面収納" },
+                { "id": "tag-spice", "label": "スパイス収納" }
+            ],
             "image": "./images/kitchen2.jpg",
             "thumbnail": "./images/kitchen2.jpg",
             "keywords": ["フライパン", "キッチンワゴン"],
@@ -29,6 +50,18 @@
             "id": "kitchen-3",
             "title": "道具を見せるキッチン収納",
             "caption": "よく使う商品を見える場所にまとめています。",
+            "description": "毎日使う調理器具を隠さず、見せる収納として楽しんでいます。窓の前を塞がないよう、高さと配置のバランスを工夫しました。",
+            "author": {
+                "id": "user-suzuki",
+                "displayName": "すずき",
+                "avatarInitial": "す"
+            },
+            "tags": [
+                { "id": "tag-pan", "label": "フライパン" },
+                { "id": "tag-hanging", "label": "吊り下げ収納" },
+                { "id": "tag-simple", "label": "シンプル" },
+                { "id": "tag-natural", "label": "ナチュラル" }
+            ],
             "image": "./images/kitchen3.jpg",
             "thumbnail": "./images/kitchen3.jpg",
             "keywords": ["フライパン", "スパイスラック", "収納"],
@@ -43,6 +76,17 @@
             "id": "kitchen-4",
             "title": "キッチンワゴンを使った収納",
             "caption": "限られたスペースをワゴンで活用しています。",
+            "description": "シンク周りの小物や食器をひとまとめにし、必要なものをすぐ取り出せるようにしました。白を基調にして清潔感を出しています。",
+            "author": {
+                "id": "user-sato",
+                "displayName": "さとう",
+                "avatarInitial": "さ"
+            },
+            "tags": [
+                { "id": "tag-rack", "label": "キッチンラック" },
+                { "id": "tag-white", "label": "ホワイトインテリア" },
+                { "id": "tag-sink", "label": "シンク周り" }
+            ],
             "image": "./images/kitchen4.jpg",
             "thumbnail": "./images/kitchen4.jpg",
             "keywords": ["キッチンワゴン", "収納"],
