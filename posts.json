@@ -1,0 +1,56 @@
+{
+    "posts": [
+        {
+            "id": "kitchen-1",
+            "title": "フライパンのあるキッチン",
+            "caption": "使いやすい調理道具をまとめたキッチンです。",
+            "image": "./images/kitchen1.jpg",
+            "thumbnail": "./images/kitchen1.jpg",
+            "keywords": ["フライパン", "スパイスラック", "キッチンワゴン"],
+            "markers": [
+                { "productId": "pan", "x": 66.6, "y": 36.7 },
+                { "productId": "rack", "x": 3.5, "y": 34.4 },
+                { "productId": "kettle", "x": 64.5, "y": 71.2 }
+            ]
+        },
+        {
+            "id": "kitchen-2",
+            "title": "収納しやすいキッチン",
+            "caption": "調理器具を手に取りやすく配置しています。",
+            "image": "./images/kitchen2.jpg",
+            "thumbnail": "./images/kitchen2.jpg",
+            "keywords": ["フライパン", "キッチンワゴン"],
+            "markers": [
+                { "productId": "pan", "x": 66.6, "y": 36.7 },
+                { "productId": "rack", "x": 3.5, "y": 34.4 },
+                { "productId": "kettle", "x": 64.5, "y": 71.2 }
+            ]
+        },
+        {
+            "id": "kitchen-3",
+            "title": "道具を見せるキッチン収納",
+            "caption": "よく使う商品を見える場所にまとめています。",
+            "image": "./images/kitchen3.jpg",
+            "thumbnail": "./images/kitchen3.jpg",
+            "keywords": ["フライパン", "スパイスラック", "収納"],
+            "markers": [
+                { "productId": "pan", "x": 66.6, "y": 36.7 },
+                { "productId": "rack", "x": 3.5, "y": 34.4 },
+                { "productId": "kettle", "x": 64.5, "y": 71.2 }
+            ]
+        },
+        {
+            "id": "kitchen-4",
+            "title": "キッチンワゴンを使った収納",
+            "caption": "限られたスペースをワゴンで活用しています。",
+            "image": "./images/kitchen4.jpg",
+            "thumbnail": "./images/kitchen4.jpg",
+            "keywords": ["キッチンワゴン", "収納"],
+            "markers": [
+                { "productId": "pan", "x": 66.6, "y": 36.7 },
+                { "productId": "rack", "x": 3.5, "y": 34.4 },
+                { "productId": "kettle", "x": 64.5, "y": 71.2 }
+            ]
+        }
+    ]
+}

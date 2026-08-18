@@ -24,21 +24,9 @@
         <main class="detail-content">
             <!-- ピンを配置するための基準となる枠 -->
             <div class="image-wrap">
-                <!-- 詳細用の画像（srcを空にして、直後のスクリプトで即座に設定） -->
+                <!-- 詳細用の画像（投稿JSONを読み込んだ後にsrcを設定） -->
                 <img id="detailImage" alt="キッチン詳細画像" class="detail-image">
-                <script>
-                    // 画面の読み込み完了を待たずに、最速で画像URLを適用する
-                    (function () {
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const targetImg = urlParams.get('img') || 'kitchen1.jpg'; // パラメータがない場合はkitchen1にする
-                        document.getElementById('detailImage').src = `./images/${targetImg}`;
-                    })();
-                </script>
-
-                <!-- 商品ピンに data-product-id を使用 -->
-                <div class="item-pin" data-product-id="pan" style="top: 36.7%; left: 66.6%;"></div>
-                <div class="item-pin" data-product-id="rack" style="top: 34.4%; left: 3.5%;"></div>
-                <div class="item-pin" data-product-id="kettle" style="top: 71.2%; left: 64.5%;"></div>
+                <!-- 商品ピンは投稿JSONのmarkersからJavaScriptで生成します -->
             </div>
         </main>
 
@@ -89,6 +77,7 @@
             // 開発用・座標取得ツール（元のまま残しています）
             // -----------------------------------------------------------
             const image = document.querySelector('.detail-image');
+            const imageWrap = document.querySelector('.image-wrap');
 
             image.addEventListener('click', (e) => {
                 const rect = image.getBoundingClientRect();
@@ -107,7 +96,6 @@
             // -----------------------------------------------------------
             // ② JSONの読み込みとポップアップの開閉処理
             // -----------------------------------------------------------
-            const pins = document.querySelectorAll('.item-pin');
             const modal = document.getElementById('productModal');
             const overlay = document.getElementById('overlay');
             const closeBtn = document.getElementById('closeBtn');
@@ -118,43 +106,67 @@
             const modalPrice = modal.querySelector('.product-price');
             const buyButton = modal.querySelector('.cart-add-btn');
 
-            let productsData = {};
-
-            // JSON データを取得する
+            // 投稿データと商品データを取得する
             try {
-                const response = await fetch('products.json');
-                productsData = await response.json();
+                const [postsResponse, productsResponse] = await Promise.all([
+                    fetch('posts.json'),
+                    fetch('products.json')
+                ]);
+
+                if (!postsResponse.ok || !productsResponse.ok) {
+                    throw new Error('JSONデータを取得できませんでした');
+                }
+
+                const { posts } = await postsResponse.json();
+                const { products } = await productsResponse.json();
+                const productsById = Object.fromEntries(
+                    products.map(product => [product.id, product])
+                );
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const postId = urlParams.get('post');
+                const legacyImage = urlParams.get('img');
+
+                // 古い ?img=kitchen1.jpg のURLも引き続き開けるようにする
+                const post = posts.find(item => item.id === postId)
+                    || posts.find(item => item.image.endsWith(`/${legacyImage}`))
+                    || posts[0];
+
+                image.src = post.image;
+                image.alt = post.title;
+
+                // 投稿JSONに保存された座標から商品ピンを生成する
+                post.markers.forEach(marker => {
+                    const pin = document.createElement('button');
+                    pin.type = 'button';
+                    pin.className = 'item-pin';
+                    pin.setAttribute('aria-label', '商品情報を表示');
+                    pin.style.top = `${marker.y}%`;
+                    pin.style.left = `${marker.x}%`;
+
+                    pin.addEventListener('click', (event) => {
+                        event.stopPropagation();
+
+                        const product = productsById[marker.productId];
+                        if (!product) return;
+
+                        modalImg.src = product.image;
+                        modalImg.alt = product.name;
+                        modalName.textContent = product.name;
+                        modalPrice.innerHTML = `${product.price.toLocaleString('ja-JP')}円<span>（税込）</span>`;
+                        buyButton.onclick = () => {
+                            window.open(product.url, '_blank', 'noopener,noreferrer');
+                        };
+
+                        modal.classList.add('active');
+                        overlay.classList.add('active');
+                    });
+
+                    imageWrap.appendChild(pin);
+                });
             } catch (error) {
                 console.error('JSONデータの読み込みに失敗しました:', error);
             }
-
-            // 全てのピンに対して、クリックされたらポップアップを開く設定をする
-            pins.forEach(pin => {
-                pin.addEventListener('click', (e) => {
-                    // 追加：ピンを押した時に、背後の画像のクリック判定（座標取得ツール）が反応しないようにブロックします
-                    e.stopPropagation();
-
-                    // どのピンが押されたか（pan, rack, kettle 等）を取得
-                    const productId = pin.getAttribute('data-product-id');
-                    // 取得したIDを使ってJSONデータから商品情報を引き出す
-                    const product = productsData[productId];
-
-                    if (product) {
-                        // JSONから取得したデータをモーダルのHTMLに流し込む
-                        modalImg.src = product.image;
-                        modalName.textContent = product.name;
-                        modalPrice.innerHTML = `${product.price}<span>（税込）</span>`;
-                        buyButton.onclick = () => {
-                            // target="_blank" と同じように新しいタブで本物のニトリネットを開く
-                            window.open(product.url, '_blank');
-                        };
-                    }
-
-                    // モーダルを開く
-                    modal.classList.add('active');
-                    overlay.classList.add('active');
-                });
-            });
 
             // ポップアップを閉じる処理
             const closeModal = () => {
