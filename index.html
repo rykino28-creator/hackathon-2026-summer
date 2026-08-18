@@ -53,7 +53,7 @@
 
     <!-- ========== ここから検索機能 ========== -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             // 1. URLから検索キーワード（?q=〇〇）を取得する
             const urlParams = new URLSearchParams(window.location.search);
             // 何も検索されていなければ「フライパン」を初期値にする
@@ -62,40 +62,44 @@
             // 検索窓に現在のキーワードを入れる
             document.getElementById('searchInput').value = query;
 
-            // 2. 擬似データベース（検索キーワードと、表示する画像の紐付け）
-            // ※画像ファイル名はお手元のもの（kitchen1.jpgなど）に合わせて変更してください
-            const imageDb = {
-                "フライパン": ["kitchen1.jpg", "kitchen2.jpg", "kitchen3.jpg"],
-                "スパイスラック": ["kitchen3.jpg", "kitchen1.jpg"], // 変化がわかるように順番を入れ替えています
-                "キッチンワゴン": ["kitchen2.jpg", "kitchen4.jpg", "kitchen1.jpg"],
-                "収納": ["kitchen4.jpg", "kitchen3.jpg"]
-            };
+            // 2. 投稿データをJSONから読み込む
+            try {
+                const response = await fetch('posts.json');
+                if (!response.ok) throw new Error('投稿データを取得できませんでした');
 
-            // 3. 検索キーワードに一致する画像リストを探す
-            let imagesToDisplay = [];
-            for (const key in imageDb) {
-                // 入力された文字が含まれていれば、その画像リストを採用
-                if (query.includes(key) || key.includes(query)) {
-                    imagesToDisplay = imageDb[key];
-                    break;
+                const { posts } = await response.json();
+                const normalizedQuery = query.trim().toLowerCase();
+
+                // 3. タイトル・本文・キーワードのいずれかに一致する投稿を探す
+                let postsToDisplay = posts.filter(post => {
+                    const searchableText = [post.title, post.caption, ...post.keywords]
+                        .join(' ')
+                        .toLowerCase();
+                    return searchableText.includes(normalizedQuery);
+                });
+
+                // 該当する投稿がなければ、先頭の2件を表示する
+                if (postsToDisplay.length === 0) {
+                    postsToDisplay = posts.slice(0, 2);
                 }
-            }
 
-            // もし該当するキーワードがなかった場合は、デフォルトの画像を出す
-            if (imagesToDisplay.length === 0) {
-                imagesToDisplay = ["kitchen1.jpg", "kitchen2.jpg"];
-            }
+                // 4. 画像グリッドに投稿のサムネイルを流し込む
+                const imageGrid = document.getElementById('imageGrid');
+                postsToDisplay.forEach(post => {
+                    const aTag = document.createElement('a');
+                    aTag.href = `detail.html?post=${encodeURIComponent(post.id)}`;
+                    aTag.className = 'grid-item';
 
-            // 4. 画像グリッドにHTMLを自動で流し込む
-            const imageGrid = document.getElementById('imageGrid');
-            imagesToDisplay.forEach(imgName => {
-                const aTag = document.createElement('a');
-                // detail.html への引継ぎURL
-                aTag.href = `detail.html?img=${imgName}`;
-                aTag.className = 'grid-item';
-                aTag.innerHTML = `<img src="./images/${imgName}" alt="${query}の検索結果">`;
-                imageGrid.appendChild(aTag);
-            });
+                    const img = document.createElement('img');
+                    img.src = post.thumbnail;
+                    img.alt = post.title;
+
+                    aTag.appendChild(img);
+                    imageGrid.appendChild(aTag);
+                });
+            } catch (error) {
+                console.error('投稿データの読み込みに失敗しました:', error);
+            }
         });
     </script>
     <!-- ========== ここまで追加 ========== -->

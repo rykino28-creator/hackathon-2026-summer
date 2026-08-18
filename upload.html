@@ -72,11 +72,11 @@
             // 1. products.jsonから商品の選択肢を作る
             try {
                 const response = await fetch('products.json');
-                const productsData = await response.json();
-                for (const [id, data] of Object.entries(productsData)) {
+                const { products } = await response.json();
+                for (const product of products) {
                     const option = document.createElement('option');
-                    option.value = id;
-                    option.textContent = `${data.name}（${data.price}）`;
+                    option.value = product.id;
+                    option.textContent = `${product.name}（${product.price.toLocaleString('ja-JP')}円）`;
                     productDropdown.appendChild(option);
                 }
             } catch (error) {

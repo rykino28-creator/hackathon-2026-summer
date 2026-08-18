@@ -190,6 +190,7 @@ body {
 /* 商品ピン（ニトリカラーの半透明） */
 .item-pin {
     position: absolute;
+    padding: 0;
     width: 32px;
     height: 32px;
     background-color: rgba(0, 158, 150, 0.7);
