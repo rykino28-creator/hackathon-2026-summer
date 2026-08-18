@@ -5,179 +5,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>画像詳細 - みんなのキッチン</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
     <div class="app-container">
-
-        <!-- ヘッダー（戻るボタン） -->
         <header class="detail-header">
-            <!-- hrefの中身をJavaScriptの履歴を戻る命令に変更 -->
-            <a href="javascript:history.back();" class="back-button">
+            <a href="index.html" class="back-button">
                 <i class="fa-solid fa-chevron-left"></i> 戻る
             </a>
         </header>
 
-        <!-- メイン画像とピンのコンテナ -->
         <main class="detail-content">
-            <!-- ピンを配置するための基準となる枠 -->
             <div class="image-wrap">
-                <!-- 詳細用の画像（投稿JSONを読み込んだ後にsrcを設定） -->
                 <img id="detailImage" alt="キッチン詳細画像" class="detail-image">
-                <!-- 商品ピンは投稿JSONのmarkersからJavaScriptで生成します -->
             </div>
         </main>
 
-        <!-- ========== ポップアップ画面 ========== -->
-        <!-- 背景を暗くするフィルター -->
         <div class="overlay" id="overlay"></div>
 
-        <!-- 下から出てくる商品詳細（ボトムシート） -->
-        <div class="product-modal" id="productModal">
-            <!-- スマホアプリっぽい上部のグレーのバー -->
+        <div class="product-modal" id="productModal" role="dialog" aria-modal="true" aria-label="商品情報">
             <div class="modal-handle"></div>
+            <button class="close-btn" id="closeBtn" aria-label="商品情報を閉じる">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
 
-            <!-- 閉じるボタン -->
-            <button class="close-btn" id="closeBtn"><i class="fa-solid fa-xmark"></i></button>
-
-            <!-- 商品情報の中身（ここはJSで上書きされますが、初期値として残しておきます） -->
             <div class="product-info">
                 <img src="./images/kitchen1.jpg" alt="商品画像" class="product-img">
                 <div class="product-details">
-                    <h3 class="product-name">IH・ガス火 軽量フライパン</h3>
-                    <p class="product-price">1,990円<span>（税込）</span></p>
+                    <h3 class="product-name">商品名</h3>
+                    <p class="product-price">価格<span>（税込）</span></p>
                 </div>
             </div>
 
             <button class="cart-add-btn">カートに入れる</button>
         </div>
-        <!-- ==================================== -->
 
-        <!-- まとめてカートに入れるボタン（画面下部固定） -->
         <div class="bottom-action">
             <button class="cart-add-btn">この写真のアイテムをまとめてカートに入れる</button>
         </div>
-
     </div>
 
-
-    <script>
-        // async を追加して、非同期処理（JSONの読み込み）ができるようにしています
-        document.addEventListener('DOMContentLoaded', async () => {
-
-
-
-
-
-
-
-            // -----------------------------------------------------------
-            // 開発用・座標取得ツール（元のまま残しています）
-            // -----------------------------------------------------------
-            const image = document.querySelector('.detail-image');
-            const imageWrap = document.querySelector('.image-wrap');
-
-            image.addEventListener('click', (e) => {
-                const rect = image.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const percentX = (x / rect.width * 100).toFixed(1);
-                const percentY = (y / rect.height * 100).toFixed(1);
-
-                // コピーするコードにも data-product-id が入るように少し改良しました
-                const pinCode = `<div class="item-pin" data-product-id="IDを入力" style="top: ${percentY}%; left: ${percentX}%;"></div>`;
-
-                alert(`【座標を取得しました！】\n\n上から (top): ${percentY}%\n左から (left): ${percentX}%\n\n▼以下のコードをコピーしてHTMLに貼り付けてください▼\n${pinCode}`);
-                console.log(pinCode);
-            });
-
-            // -----------------------------------------------------------
-            // ② JSONの読み込みとポップアップの開閉処理
-            // -----------------------------------------------------------
-            const modal = document.getElementById('productModal');
-            const overlay = document.getElementById('overlay');
-            const closeBtn = document.getElementById('closeBtn');
-
-            // モーダル内の要素を取得
-            const modalImg = modal.querySelector('.product-img');
-            const modalName = modal.querySelector('.product-name');
-            const modalPrice = modal.querySelector('.product-price');
-            const buyButton = modal.querySelector('.cart-add-btn');
-
-            // 投稿データと商品データを取得する
-            try {
-                const [postsResponse, productsResponse] = await Promise.all([
-                    fetch('posts.json'),
-                    fetch('products.json')
-                ]);
-
-                if (!postsResponse.ok || !productsResponse.ok) {
-                    throw new Error('JSONデータを取得できませんでした');
-                }
-
-                const { posts } = await postsResponse.json();
-                const { products } = await productsResponse.json();
-                const productsById = Object.fromEntries(
-                    products.map(product => [product.id, product])
-                );
-
-                const urlParams = new URLSearchParams(window.location.search);
-                const postId = urlParams.get('post');
-                const legacyImage = urlParams.get('img');
-
-                // 古い ?img=kitchen1.jpg のURLも引き続き開けるようにする
-                const post = posts.find(item => item.id === postId)
-                    || posts.find(item => item.image.endsWith(`/${legacyImage}`))
-                    || posts[0];
-
-                image.src = post.image;
-                image.alt = post.title;
-
-                // 投稿JSONに保存された座標から商品ピンを生成する
-                post.markers.forEach(marker => {
-                    const pin = document.createElement('button');
-                    pin.type = 'button';
-                    pin.className = 'item-pin';
-                    pin.setAttribute('aria-label', '商品情報を表示');
-                    pin.style.top = `${marker.y}%`;
-                    pin.style.left = `${marker.x}%`;
-
-                    pin.addEventListener('click', (event) => {
-                        event.stopPropagation();
-
-                        const product = productsById[marker.productId];
-                        if (!product) return;
-
-                        modalImg.src = product.image;
-                        modalImg.alt = product.name;
-                        modalName.textContent = product.name;
-                        modalPrice.innerHTML = `${product.price.toLocaleString('ja-JP')}円<span>（税込）</span>`;
-                        buyButton.onclick = () => {
-                            window.open(product.url, '_blank', 'noopener,noreferrer');
-                        };
-
-                        modal.classList.add('active');
-                        overlay.classList.add('active');
-                    });
-
-                    imageWrap.appendChild(pin);
-                });
-            } catch (error) {
-                console.error('JSONデータの読み込みに失敗しました:', error);
-            }
-
-            // ポップアップを閉じる処理
-            const closeModal = () => {
-                modal.classList.remove('active');
-                overlay.classList.remove('active');
-            };
-
-            closeBtn.addEventListener('click', closeModal);
-            overlay.addEventListener('click', closeModal);
-        });
-    </script>
+    <script type="module" src="./src/detail.js"></script>
 </body>
 
 </html>

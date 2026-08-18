@@ -5,154 +5,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新規投稿 - みんなのキッチン</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
     <div class="app-container">
-        <!-- ヘッダー -->
-        <header class="detail-header" style="display: flex; align-items: center;">
+        <header class="detail-header upload-header">
             <a href="index.html" class="back-button">
                 <i class="fa-solid fa-xmark"></i> キャンセル
             </a>
-            <!-- 中央にタイトルを配置するためのスタイル -->
-            <h2 style="font-size: 16px; margin-left: auto; margin-right: auto; padding-right: 70px;">新規投稿</h2>
+            <h2>新規投稿</h2>
         </header>
 
-        <main class="content" style="padding: 16px;">
-            <!-- ① 画像アップロードエリア -->
-            <input type="file" id="imageInput" accept="image/*" style="display: none;">
+        <main class="content upload-content">
+            <input type="file" id="imageInput" accept="image/*" hidden>
             <label for="imageInput" class="upload-btn" id="uploadLabel">
                 <i class="fa-solid fa-camera"></i> 写真をアップロード
             </label>
 
-            <!-- ② 画像プレビューとピン配置エリア（初期は非表示） -->
-            <div class="image-wrap" id="previewWrap" style="display: none; margin-top: 16px;">
-                <p style="font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #009E96;">
+            <div class="image-wrap preview-wrap" id="previewWrap">
+                <p class="pin-guide">
                     <i class="fa-solid fa-hand-pointer"></i> 画像をタップしてピンを置く
                 </p>
-                <img id="previewImage" class="detail-image" style="width: 100%; border-radius: 8px;">
-                <!-- ピンがJSでここに追加されます -->
+                <img id="previewImage" class="detail-image preview-image" alt="投稿画像のプレビュー">
             </div>
 
-            <!-- ③ 商品選択エリア（ピンを置いたら表示される） -->
-            <div id="productSelectArea"
-                style="display: none; margin-top: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px;">
-                <p style="font-size: 14px; margin-bottom: 8px; font-weight: bold;">このピンに紐付ける商品：</p>
-                <select id="productDropdown"
-                    style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc; margin-bottom: 12px; font-size: 16px;">
+            <div id="productSelectArea" class="product-select-area">
+                <p>このピンに紐付ける商品：</p>
+                <select id="productDropdown">
                     <option value="">商品を選択してください</option>
-                    <!-- products.jsonから自動で読み込まれます -->
                 </select>
-                <button id="confirmPinBtn" class="cart-add-btn" style="padding: 12px;">ピンを確定する</button>
+                <button id="confirmPinBtn" class="cart-add-btn compact-button">ピンを確定する</button>
             </div>
         </main>
 
-        <!-- 投稿ボタン -->
         <div class="bottom-action">
-            <button id="submitBtn" class="cart-add-btn"
-                style="background-color: #cccccc; cursor: not-allowed;">この内容で投稿する</button>
+            <button id="submitBtn" class="cart-add-btn submit-button">この内容で投稿する</button>
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const imageInput = document.getElementById('imageInput');
-            const uploadLabel = document.getElementById('uploadLabel');
-            const previewWrap = document.getElementById('previewWrap');
-            const previewImage = document.getElementById('previewImage');
-            const productSelectArea = document.getElementById('productSelectArea');
-            const productDropdown = document.getElementById('productDropdown');
-            const confirmPinBtn = document.getElementById('confirmPinBtn');
-            const submitBtn = document.getElementById('submitBtn');
-
-            let currentTempPin = null;
-
-            // 1. products.jsonから商品の選択肢を作る
-            try {
-                const response = await fetch('products.json');
-                const { products } = await response.json();
-                for (const product of products) {
-                    const option = document.createElement('option');
-                    option.value = product.id;
-                    option.textContent = `${product.name}（${product.price.toLocaleString('ja-JP')}円）`;
-                    productDropdown.appendChild(option);
-                }
-            } catch (error) {
-                console.error('JSON読み込みエラー:', error);
-            }
-
-            // 2. 画像が選ばれたらプレビューを表示する
-            imageInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        previewImage.src = e.target.result;
-                        uploadLabel.style.display = 'none'; // ボタンを隠す
-                        previewWrap.style.display = 'block'; // プレビューを表示
-                        // 投稿ボタンをアクティブにする
-                        submitBtn.style.backgroundColor = '#009E96';
-                        submitBtn.style.cursor = 'pointer';
-                    }
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            // 3. プレビュー画像をクリックしてピンを仮置きする
-            previewImage.addEventListener('click', (e) => {
-                // すでに仮ピンがあれば消す（1回につき1つずつ置くため）
-                if (currentTempPin) currentTempPin.remove();
-
-                const rect = previewImage.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const percentX = (x / rect.width * 100).toFixed(1);
-                const percentY = (y / rect.height * 100).toFixed(1);
-
-                // 仮のピンを「赤色」で表示して目立たせる
-                currentTempPin = document.createElement('div');
-                currentTempPin.className = 'item-pin';
-                currentTempPin.style.top = `${percentY}%`;
-                currentTempPin.style.left = `${percentX}%`;
-                currentTempPin.style.backgroundColor = '#e60012'; // ニトリの赤
-                currentTempPin.style.animation = 'none'; // 仮置き中はアニメーション停止
-                previewWrap.appendChild(currentTempPin);
-
-                // 商品選択エリアを表示
-                productSelectArea.style.display = 'block';
-            });
-
-            // 4. 商品を選んでピンを確定する
-            confirmPinBtn.addEventListener('click', () => {
-                const selectedProductId = productDropdown.value;
-                if (!selectedProductId) {
-                    alert('商品を選択してください！');
-                    return;
-                }
-
-                // 仮ピン（赤）を本番のピン（緑のアニメーション付き）に変える
-                currentTempPin.style.backgroundColor = 'rgba(0, 158, 150, 0.7)';
-                currentTempPin.style.animation = 'pulse 2s infinite';
-                currentTempPin.setAttribute('data-product-id', selectedProductId);
-
-                // 次のピンを置けるようにリセットする
-                currentTempPin = null;
-                productDropdown.value = '';
-                productSelectArea.style.display = 'none';
-            });
-
-            // 5. 投稿ボタンの処理
-            submitBtn.addEventListener('click', () => {
-                // アクティブ（緑色）になっている時だけ動作する
-                if (submitBtn.style.backgroundColor === 'rgb(0, 158, 150)') {
-                    alert('【デモ】投稿が完了しました！\n（実際のシステムではここでデータベースに保存されます）');
-                    window.location.href = 'index.html'; // トップ画面に戻る
-                }
-            });
-        });
-    </script>
+    <script type="module" src="./src/upload.js"></script>
 </body>
 
 </html>

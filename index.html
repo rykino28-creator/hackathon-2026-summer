@@ -5,104 +5,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>検索結果 - みんなのキッチン</title>
-    <!-- CSSの読み込み -->
-    <link rel="stylesheet" href="style.css">
-    <!-- FontAwesome（アイコン用）の読み込み -->
+    <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-    <!-- スマホ画面の枠となるコンテナ -->
     <div class="app-container">
-
-        <!-- ヘッダーエリア -->
         <header class="header">
-            <!-- 検索窓 -->
-            <!-- 検索窓をformタグにして、実際に入力・検索できるようにする -->
             <form class="search-bar" action="index.html" method="GET">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <!-- name="q" をつけることで、検索時にURLが「?q=入力文字」に変わります -->
                 <input type="text" name="q" id="searchInput" placeholder="アイテムを検索...">
             </form>
 
-            <!-- タブ -->
             <div class="tabs">
                 <div class="tab">商品一覧</div>
                 <div class="tab active">みんなのキッチン</div>
             </div>
         </header>
 
-        <!-- コンテンツエリア（画像グリッド） -->
         <main class="content">
-            <!-- ：JSで中身を書き換えるため id="imageGrid" を追加 -->
-            <div class="image-grid" id="imageGrid">
-                <!-- ここはJavaScriptで自動生成されるため空にしておきます -->
-            </div>
+            <div class="image-grid" id="imageGrid"></div>
         </main>
 
-        <!-- ボトムナビゲーション -->
-        <nav class="bottom-nav">
-            <a href="#" class="nav-item active"><i class="fa-solid fa-house"></i></a>
-            <a href="upload.html" class="nav-item"><i class="fa-solid fa-circle-plus"></i></a>
-            <a href="#" class="nav-item"><i class="fa-solid fa-cart-shopping"></i></a>
-            <a href="#" class="nav-item"><i class="fa-regular fa-bell"></i></a>
-            <a href="#" class="nav-item"><i class="fa-regular fa-user"></i></a>
+        <nav class="bottom-nav" aria-label="メインナビゲーション">
+            <a href="#" class="nav-item active" aria-label="ホーム"><i class="fa-solid fa-house"></i></a>
+            <a href="upload.html" class="nav-item" aria-label="新規投稿"><i class="fa-solid fa-circle-plus"></i></a>
+            <a href="#" class="nav-item" aria-label="カート"><i class="fa-solid fa-cart-shopping"></i></a>
+            <a href="#" class="nav-item" aria-label="通知"><i class="fa-regular fa-bell"></i></a>
+            <a href="#" class="nav-item" aria-label="プロフィール"><i class="fa-regular fa-user"></i></a>
         </nav>
-
     </div>
 
-    <!-- ========== ここから検索機能 ========== -->
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            // 1. URLから検索キーワード（?q=〇〇）を取得する
-            const urlParams = new URLSearchParams(window.location.search);
-            // 何も検索されていなければ「フライパン」を初期値にする
-            const query = urlParams.get('q') || 'フライパン';
-
-            // 検索窓に現在のキーワードを入れる
-            document.getElementById('searchInput').value = query;
-
-            // 2. 投稿データをJSONから読み込む
-            try {
-                const response = await fetch('posts.json');
-                if (!response.ok) throw new Error('投稿データを取得できませんでした');
-
-                const { posts } = await response.json();
-                const normalizedQuery = query.trim().toLowerCase();
-
-                // 3. タイトル・本文・キーワードのいずれかに一致する投稿を探す
-                let postsToDisplay = posts.filter(post => {
-                    const searchableText = [post.title, post.caption, ...post.keywords]
-                        .join(' ')
-                        .toLowerCase();
-                    return searchableText.includes(normalizedQuery);
-                });
-
-                // 該当する投稿がなければ、先頭の2件を表示する
-                if (postsToDisplay.length === 0) {
-                    postsToDisplay = posts.slice(0, 2);
-                }
-
-                // 4. 画像グリッドに投稿のサムネイルを流し込む
-                const imageGrid = document.getElementById('imageGrid');
-                postsToDisplay.forEach(post => {
-                    const aTag = document.createElement('a');
-                    aTag.href = `detail.html?post=${encodeURIComponent(post.id)}`;
-                    aTag.className = 'grid-item';
-
-                    const img = document.createElement('img');
-                    img.src = post.thumbnail;
-                    img.alt = post.title;
-
-                    aTag.appendChild(img);
-                    imageGrid.appendChild(aTag);
-                });
-            } catch (error) {
-                console.error('投稿データの読み込みに失敗しました:', error);
-            }
-        });
-    </script>
-    <!-- ========== ここまで追加 ========== -->
+    <script type="module" src="./src/index.js"></script>
 </body>
 
 </html>
