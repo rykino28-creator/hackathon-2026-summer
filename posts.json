@@ -7,10 +7,10 @@
             "image": "./images/kitchen1.jpg",
             "thumbnail": "./images/kitchen1.jpg",
             "keywords": ["フライパン", "スパイスラック", "キッチンワゴン"],
-            "markers": [
-                { "productId": "pan", "x": 66.6, "y": 36.7 },
-                { "productId": "rack", "x": 3.5, "y": 34.4 },
-                { "productId": "kettle", "x": 64.5, "y": 71.2 }
+            "pins": [
+                { "id": "kitchen-1-pan", "productId": "pan", "x": 51.0, "y": 29.0 },
+                { "id": "kitchen-1-rack", "productId": "rack", "x": 25.0, "y": 48.0 },
+                { "id": "kitchen-1-kettle", "productId": "kettle", "x": 69.0, "y": 76.0 }
             ]
         },
         {
@@ -20,10 +20,9 @@
             "image": "./images/kitchen2.jpg",
             "thumbnail": "./images/kitchen2.jpg",
             "keywords": ["フライパン", "キッチンワゴン"],
-            "markers": [
-                { "productId": "pan", "x": 66.6, "y": 36.7 },
-                { "productId": "rack", "x": 3.5, "y": 34.4 },
-                { "productId": "kettle", "x": 64.5, "y": 71.2 }
+            "pins": [
+                { "id": "kitchen-2-rack", "productId": "rack", "x": 11.0, "y": 60.0 },
+                { "id": "kitchen-2-pan", "productId": "pan", "x": 79.0, "y": 47.0 }
             ]
         },
         {
@@ -33,10 +32,11 @@
             "image": "./images/kitchen3.jpg",
             "thumbnail": "./images/kitchen3.jpg",
             "keywords": ["フライパン", "スパイスラック", "収納"],
-            "markers": [
-                { "productId": "pan", "x": 66.6, "y": 36.7 },
-                { "productId": "rack", "x": 3.5, "y": 34.4 },
-                { "productId": "kettle", "x": 64.5, "y": 71.2 }
+            "pins": [
+                { "id": "kitchen-3-pan-left", "productId": "pan", "x": 25.0, "y": 27.0 },
+                { "id": "kitchen-3-pan-center", "productId": "pan", "x": 42.0, "y": 30.0 },
+                { "id": "kitchen-3-pan-right", "productId": "pan", "x": 49.0, "y": 25.0 },
+                { "id": "kitchen-3-kettle", "productId": "kettle", "x": 31.0, "y": 53.0 }
             ]
         },
         {
@@ -46,10 +46,8 @@
             "image": "./images/kitchen4.jpg",
             "thumbnail": "./images/kitchen4.jpg",
             "keywords": ["キッチンワゴン", "収納"],
-            "markers": [
-                { "productId": "pan", "x": 66.6, "y": 36.7 },
-                { "productId": "rack", "x": 3.5, "y": 34.4 },
-                { "productId": "kettle", "x": 64.5, "y": 71.2 }
+            "pins": [
+                { "id": "kitchen-4-rack", "productId": "rack", "x": 52.0, "y": 30.0 }
             ]
         }
     ]

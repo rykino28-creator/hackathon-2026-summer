@@ -34,16 +34,17 @@ function openProduct(product) {
   overlay.classList.add('active');
 }
 
-function createMarker(marker) {
+function createPin(pinData) {
   const pin = document.createElement('button');
   pin.type = 'button';
   pin.className = 'item-pin';
   pin.setAttribute('aria-label', '商品情報を表示');
-  pin.style.top = `${marker.y}%`;
-  pin.style.left = `${marker.x}%`;
+  pin.dataset.pinId = pinData.id;
+  pin.style.top = `${pinData.y}%`;
+  pin.style.left = `${pinData.x}%`;
   pin.addEventListener('click', (event) => {
     event.stopPropagation();
-    const product = productsById[marker.productId];
+    const product = productsById[pinData.productId];
     if (product) openProduct(product);
   });
   return pin;
@@ -52,7 +53,7 @@ function createMarker(marker) {
 if (post) {
   image.src = post.image;
   image.alt = post.title;
-  post.markers.forEach((marker) => imageWrap.appendChild(createMarker(marker)));
+  post.pins.forEach((pin) => imageWrap.appendChild(createPin(pin)));
 }
 
 // ハッカソン開発中に写真上の座標を取得するための補助機能です。

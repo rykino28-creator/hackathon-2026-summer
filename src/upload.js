@@ -11,7 +11,7 @@ const confirmPinButton = document.getElementById('confirmPinBtn');
 const submitButton = document.getElementById('submitBtn');
 
 let currentTempPin = null;
-const confirmedMarkers = [];
+const confirmedPins = [];
 
 products.forEach((product) => {
   const option = document.createElement('option');
@@ -58,7 +58,8 @@ confirmPinButton.addEventListener('click', () => {
     return;
   }
 
-  confirmedMarkers.push({
+  confirmedPins.push({
+    id: crypto.randomUUID(),
     productId: productDropdown.value,
     x: Number(currentTempPin.dataset.x),
     y: Number(currentTempPin.dataset.y)
@@ -75,7 +76,7 @@ submitButton.addEventListener('click', () => {
 
   console.log('投稿デモデータ:', {
     image: previewImage.src,
-    markers: confirmedMarkers
+    pins: confirmedPins
   });
   window.alert('【デモ】投稿が完了しました！\n（保存機能は次の段階で実装します）');
   window.location.href = 'index.html';
