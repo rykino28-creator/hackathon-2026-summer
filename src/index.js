@@ -21,6 +21,8 @@ const filterPanel = document.getElementById('filterPanel');
 const filterGroupsContainer = document.getElementById('filterGroups');
 const filterClear = document.getElementById('filterClear');
 const favoriteFilter = document.getElementById('favoriteFilter');
+const filterOverlay = document.getElementById('filterOverlay');
+const filterApply = document.getElementById('filterApply');
 
 searchInput.value = urlParams.get('q') || '';
 
@@ -106,8 +108,8 @@ function updateFilterButtons() {
   favoriteFilter.classList.toggle('is-selected', favoritesOnly);
   favoriteFilter.setAttribute('aria-pressed', String(favoritesOnly));
   favoriteFilter.textContent = favoritesOnly
-    ? '♥ お気に入り投稿 ×'
-    : '♡ お気に入り投稿';
+    ? '♥ お気に入り ×'
+    : '♡ お気に入り';
   filterToggle.classList.toggle('has-selection', selectedTags.size > 0 || favoritesOnly);
 }
 
@@ -135,6 +137,7 @@ function createFilterGroups() {
       });
       chips.appendChild(button);
     });
+    if (group.label === 'カラー') chips.appendChild(favoriteFilter);
     section.appendChild(chips);
     filterGroupsContainer.appendChild(section);
   });
@@ -143,11 +146,18 @@ function createFilterGroups() {
 
 function setFilterPanel(isOpen) {
   filterPanel.hidden = !isOpen;
+  filterOverlay.hidden = !isOpen;
+  document.body.classList.toggle('filter-open', isOpen);
   filterToggle.classList.toggle('is-open', isOpen);
   filterToggle.setAttribute('aria-expanded', String(isOpen));
 }
 
 filterToggle.addEventListener('click', () => setFilterPanel(filterPanel.hidden));
+filterOverlay.addEventListener('click', () => setFilterPanel(false));
+filterApply.addEventListener('click', () => {
+  renderPosts();
+  setFilterPanel(false);
+});
 favoriteFilter.addEventListener('click', () => {
   favoritesOnly = !favoritesOnly;
   updateFilterButtons();
@@ -164,6 +174,9 @@ searchForm.addEventListener('submit', (event) => {
   renderPosts();
 });
 searchInput.addEventListener('input', renderPosts);
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !filterPanel.hidden) setFilterPanel(false);
+});
 
 createFilterGroups();
 setFilterPanel(selectedTags.size > 0 || favoritesOnly);

@@ -26,10 +26,15 @@
                     </button>
                 </form>
 
-                <section class="filter-panel" id="filterPanel" aria-label="タグの絞り込み" hidden>
-                    <button class="favorite-filter" id="favoriteFilter" type="button" aria-pressed="false"></button>
+                <div class="filter-overlay" id="filterOverlay" hidden></div>
+
+                <section class="filter-panel" id="filterPanel" role="dialog" aria-modal="true"
+                    aria-label="タグの絞り込み" hidden>
+                    <button class="filter-chip favorite-filter" id="favoriteFilter" type="button"
+                        aria-pressed="false"></button>
                     <div id="filterGroups"></div>
                     <button class="filter-clear" id="filterClear" type="button" hidden>選択をすべて解除</button>
+                    <button class="filter-apply" id="filterApply" type="button">この条件で検索</button>
                 </section>
             </div>
 
