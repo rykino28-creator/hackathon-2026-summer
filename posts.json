@@ -19,9 +19,40 @@
             "thumbnail": "./images/kitchen1.jpg",
             "keywords": ["フライパン", "スパイスラック", "キッチンワゴン"],
             "pins": [
-                { "id": "kitchen-1-pan", "productId": "pan", "x": 51.0, "y": 29.0 },
-                { "id": "kitchen-1-rack", "productId": "rack", "x": 25.0, "y": 48.0 },
-                { "id": "kitchen-1-kettle", "productId": "kettle", "x": 69.0, "y": 76.0 }
+                {
+                    "id": "kitchen-1-pan",
+                    "sourceType": "nitori",
+                    "representativeProductId": "pan",
+                    "x": 51.0,
+                    "y": 29.0,
+                    "products": [
+                        { "productId": "pan", "relation": "exact" },
+                        { "productId": "pan-light", "relation": "similar" },
+                        { "productId": "pan-deep", "relation": "similar" }
+                    ]
+                },
+                {
+                    "id": "kitchen-1-rack",
+                    "sourceType": "non-nitori",
+                    "representativeProductId": "rack-slim",
+                    "x": 25.0,
+                    "y": 48.0,
+                    "products": [
+                        { "productId": "rack-slim", "relation": "alternative" },
+                        { "productId": "rack-wide", "relation": "alternative" }
+                    ]
+                },
+                {
+                    "id": "kitchen-1-kettle",
+                    "sourceType": "nitori",
+                    "representativeProductId": "kettle",
+                    "x": 69.0,
+                    "y": 76.0,
+                    "products": [
+                        { "productId": "kettle", "relation": "exact" },
+                        { "productId": "kettle-compact", "relation": "similar" }
+                    ]
+                }
             ]
         },
         {
@@ -42,8 +73,28 @@
             "thumbnail": "./images/kitchen2.jpg",
             "keywords": ["フライパン", "キッチンワゴン"],
             "pins": [
-                { "id": "kitchen-2-rack", "productId": "rack", "x": 11.0, "y": 60.0 },
-                { "id": "kitchen-2-pan", "productId": "pan", "x": 79.0, "y": 47.0 }
+                {
+                    "id": "kitchen-2-rack",
+                    "sourceType": "non-nitori",
+                    "representativeProductId": "rack-wide",
+                    "x": 11.0,
+                    "y": 60.0,
+                    "products": [
+                        { "productId": "rack-wide", "relation": "alternative" },
+                        { "productId": "rack-slim", "relation": "alternative" }
+                    ]
+                },
+                {
+                    "id": "kitchen-2-pan",
+                    "sourceType": "non-nitori",
+                    "representativeProductId": "pan-light",
+                    "x": 79.0,
+                    "y": 47.0,
+                    "products": [
+                        { "productId": "pan-light", "relation": "alternative" },
+                        { "productId": "pan-deep", "relation": "alternative" }
+                    ]
+                }
             ]
         },
         {
@@ -66,10 +117,50 @@
             "thumbnail": "./images/kitchen3.jpg",
             "keywords": ["フライパン", "スパイスラック", "収納"],
             "pins": [
-                { "id": "kitchen-3-pan-left", "productId": "pan", "x": 25.0, "y": 27.0 },
-                { "id": "kitchen-3-pan-center", "productId": "pan", "x": 42.0, "y": 30.0 },
-                { "id": "kitchen-3-pan-right", "productId": "pan", "x": 49.0, "y": 25.0 },
-                { "id": "kitchen-3-kettle", "productId": "kettle", "x": 31.0, "y": 53.0 }
+                {
+                    "id": "kitchen-3-pan-left",
+                    "sourceType": "nitori",
+                    "representativeProductId": "pan",
+                    "x": 25.0,
+                    "y": 27.0,
+                    "products": [
+                        { "productId": "pan", "relation": "exact" },
+                        { "productId": "pan-light", "relation": "similar" }
+                    ]
+                },
+                {
+                    "id": "kitchen-3-pan-center",
+                    "sourceType": "non-nitori",
+                    "representativeProductId": "pan-deep",
+                    "x": 42.0,
+                    "y": 30.0,
+                    "products": [
+                        { "productId": "pan-deep", "relation": "alternative" },
+                        { "productId": "pan-light", "relation": "alternative" }
+                    ]
+                },
+                {
+                    "id": "kitchen-3-pan-right",
+                    "sourceType": "non-nitori",
+                    "representativeProductId": "pan-light",
+                    "x": 49.0,
+                    "y": 25.0,
+                    "products": [
+                        { "productId": "pan-light", "relation": "alternative" },
+                        { "productId": "pan-deep", "relation": "alternative" }
+                    ]
+                },
+                {
+                    "id": "kitchen-3-kettle",
+                    "sourceType": "nitori",
+                    "representativeProductId": "kettle",
+                    "x": 31.0,
+                    "y": 53.0,
+                    "products": [
+                        { "productId": "kettle", "relation": "exact" },
+                        { "productId": "kettle-stainless", "relation": "similar" }
+                    ]
+                }
             ]
         },
         {
@@ -91,7 +182,18 @@
             "thumbnail": "./images/kitchen4.jpg",
             "keywords": ["キッチンワゴン", "収納"],
             "pins": [
-                { "id": "kitchen-4-rack", "productId": "rack", "x": 52.0, "y": 30.0 }
+                {
+                    "id": "kitchen-4-rack",
+                    "sourceType": "nitori",
+                    "representativeProductId": "rack",
+                    "x": 52.0,
+                    "y": 30.0,
+                    "products": [
+                        { "productId": "rack", "relation": "exact" },
+                        { "productId": "rack-slim", "relation": "similar" },
+                        { "productId": "rack-wide", "relation": "similar" }
+                    ]
+                }
             ]
         }
     ]

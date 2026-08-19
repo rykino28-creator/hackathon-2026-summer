@@ -60,9 +60,13 @@ confirmPinButton.addEventListener('click', () => {
 
   confirmedPins.push({
     id: crypto.randomUUID(),
-    productId: productDropdown.value,
+    sourceType: 'nitori',
+    representativeProductId: productDropdown.value,
     x: Number(currentTempPin.dataset.x),
-    y: Number(currentTempPin.dataset.y)
+    y: Number(currentTempPin.dataset.y),
+    products: [
+      { productId: productDropdown.value, relation: 'exact' }
+    ]
   });
 
   currentTempPin.classList.remove('item-pin--temporary');

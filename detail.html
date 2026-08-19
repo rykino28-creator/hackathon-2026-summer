@@ -49,20 +49,18 @@
             <button class="close-btn" id="closeBtn" aria-label="商品情報を閉じる">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-
-            <div class="product-info">
-                <img src="./images/item-temp-thumbnail.png" alt="商品画像" class="product-img">
-                <div class="product-details">
-                    <h3 class="product-name">商品名</h3>
-                    <p class="product-price">価格<span>（税込）</span></p>
-                </div>
-            </div>
-
-            <button class="cart-add-btn">カートに入れる</button>
+            <h2 class="product-modal-title" id="productModalTitle">商品候補</h2>
+            <div class="product-options" id="productOptions"></div>
         </div>
 
-        <div class="bottom-action">
-            <button class="cart-add-btn">この写真のアイテムをまとめてカートに入れる</button>
+        <div class="selection-panel" id="selectionPanel">
+            <div class="selected-products" id="selectedProducts"></div>
+            <button class="selection-summary" id="selectionSummary" type="button" aria-expanded="false">
+                <span><strong id="selectedCount">0点</strong>を選択中</span>
+                <span class="selected-total" id="selectedTotal">合計 0円</span>
+                <span class="selection-chevron" id="selectionChevron" aria-hidden="true">⌃</span>
+            </button>
+            <button class="checkout-button" id="checkoutButton" type="button" disabled>カートに追加</button>
         </div>
     </div>
 
