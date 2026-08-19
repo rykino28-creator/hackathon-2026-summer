@@ -11,6 +11,7 @@ const filterGroups = [
 
 const urlParams = new URLSearchParams(window.location.search);
 const selectedTags = new Set(urlParams.getAll('tag'));
+let favoritesOnly = urlParams.get('favorite') === '1';
 const searchInput = document.getElementById('searchInput');
 const searchForm = document.getElementById('searchForm');
 const imageGrid = document.getElementById('imageGrid');
@@ -19,6 +20,7 @@ const filterToggle = document.getElementById('filterToggle');
 const filterPanel = document.getElementById('filterPanel');
 const filterGroupsContainer = document.getElementById('filterGroups');
 const filterClear = document.getElementById('filterClear');
+const favoriteFilter = document.getElementById('favoriteFilter');
 
 searchInput.value = urlParams.get('q') || '';
 
@@ -27,6 +29,7 @@ function updateUrl() {
   const query = searchInput.value.trim();
   if (query) params.set('q', query);
   selectedTags.forEach((tag) => params.append('tag', tag));
+  if (favoritesOnly) params.set('favorite', '1');
   const nextUrl = params.size > 0 ? `?${params.toString()}` : window.location.pathname;
   window.history.replaceState({}, '', nextUrl);
 }
@@ -62,7 +65,9 @@ function createPostTile(post) {
 
   updateFavoriteButton(isPostFavorite(post.id));
   favoriteButton.addEventListener('click', () => {
-    updateFavoriteButton(togglePostFavorite(post.id));
+    const isFavorite = togglePostFavorite(post.id);
+    updateFavoriteButton(isFavorite);
+    if (favoritesOnly && !isFavorite) renderPosts();
   });
 
   tile.appendChild(favoriteButton);
@@ -71,13 +76,16 @@ function createPostTile(post) {
 
 function renderPosts() {
   const query = searchInput.value;
-  const matchedPosts = searchPosts(posts, query, [...selectedTags]);
+  const favoritePostIds = favoritesOnly
+    ? posts.filter((post) => isPostFavorite(post.id)).map((post) => post.id)
+    : null;
+  const matchedPosts = searchPosts(posts, query, [...selectedTags], favoritePostIds);
   imageGrid.replaceChildren(...matchedPosts.map(createPostTile));
 
-  const isFiltering = query.trim() || selectedTags.size > 0;
+  const isFiltering = query.trim() || selectedTags.size > 0 || favoritesOnly;
   searchSummary.textContent = isFiltering ? `${matchedPosts.length}件の投稿が見つかりました` : '';
   searchSummary.classList.toggle('is-empty', isFiltering && matchedPosts.length === 0);
-  filterClear.hidden = selectedTags.size === 0;
+  filterClear.hidden = selectedTags.size === 0 && !favoritesOnly;
   updateUrl();
 }
 
@@ -95,7 +103,12 @@ function updateFilterButtons() {
       button.appendChild(removeMark);
     }
   });
-  filterToggle.classList.toggle('has-selection', selectedTags.size > 0);
+  favoriteFilter.classList.toggle('is-selected', favoritesOnly);
+  favoriteFilter.setAttribute('aria-pressed', String(favoritesOnly));
+  favoriteFilter.textContent = favoritesOnly
+    ? '♥ お気に入り投稿 ×'
+    : '♡ お気に入り投稿';
+  filterToggle.classList.toggle('has-selection', selectedTags.size > 0 || favoritesOnly);
 }
 
 function createFilterGroups() {
@@ -135,8 +148,14 @@ function setFilterPanel(isOpen) {
 }
 
 filterToggle.addEventListener('click', () => setFilterPanel(filterPanel.hidden));
+favoriteFilter.addEventListener('click', () => {
+  favoritesOnly = !favoritesOnly;
+  updateFilterButtons();
+  renderPosts();
+});
 filterClear.addEventListener('click', () => {
   selectedTags.clear();
+  favoritesOnly = false;
   updateFilterButtons();
   renderPosts();
 });
@@ -147,5 +166,5 @@ searchForm.addEventListener('submit', (event) => {
 searchInput.addEventListener('input', renderPosts);
 
 createFilterGroups();
-setFilterPanel(selectedTags.size > 0);
+setFilterPanel(selectedTags.size > 0 || favoritesOnly);
 renderPosts();

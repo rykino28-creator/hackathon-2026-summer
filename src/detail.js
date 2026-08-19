@@ -1,4 +1,5 @@
 import itemTempThumbnailUrl from '../images/item-temp-thumbnail.png';
+import { getSelectedProductIds, setSelectedProductIds } from './cart-selection.js';
 import { posts, productsById } from './data.js';
 import {
   isPostFavorite,
@@ -27,7 +28,13 @@ const selectedTotal = document.getElementById('selectedTotal');
 const selectionChevron = document.getElementById('selectionChevron');
 const checkoutButton = document.getElementById('checkoutButton');
 
-const selectedProductIds = new Set();
+const selectedProductIds = new Set(
+  getSelectedProductIds().filter((productId) => productsById[productId])
+);
+
+function persistSelectedProducts() {
+  setSelectedProductIds([...selectedProductIds]);
+}
 
 const urlParams = new URLSearchParams(window.location.search);
 const post = findPost(posts, {
@@ -91,6 +98,7 @@ function renderSelectedProducts() {
     removeButton.setAttribute('aria-label', `${product.name}を選択から解除`);
     removeButton.addEventListener('click', () => {
       selectedProductIds.delete(productId);
+      persistSelectedProducts();
       renderSelectedProducts();
       refreshModalCartButtons();
     });
@@ -117,6 +125,7 @@ function toggleProductSelection(productId) {
   } else {
     selectedProductIds.add(productId);
   }
+  persistSelectedProducts();
   renderSelectedProducts();
   refreshModalCartButtons();
 }
@@ -242,7 +251,7 @@ function createRepresentativeProductCard(pinData) {
       'aria-label',
       isFavorite ? `${product.name}をお気に入りから解除` : `${product.name}をお気に入りに追加`
     );
-    favoriteButton.textContent = isFavorite ? '♥' : '♡';
+    favoriteButton.textContent = isFavorite ? '★' : '☆';
   };
 
   updateProductFavorite(isProductFavorite(product.id));
@@ -270,8 +279,10 @@ if (post) {
   });
 
   post.tags.forEach((tag) => {
-    const tagElement = document.createElement('span');
+    const tagElement = document.createElement('a');
     tagElement.className = 'tag-chip';
+    tagElement.href = `index.html?q=${encodeURIComponent(tag.label)}`;
+    tagElement.setAttribute('aria-label', `${tag.label}の投稿を検索`);
     tagElement.textContent = `#${tag.label}`;
     postTags.appendChild(tagElement);
   });
@@ -286,6 +297,10 @@ selectionSummary.addEventListener('click', () => {
   selectionChevron.textContent = isExpanded ? '⌄' : '⌃';
 });
 
+checkoutButton.addEventListener('click', () => {
+  if (selectedProductIds.size > 0) window.location.href = 'cart.html';
+});
+
 // ハッカソン開発中に写真上の座標を取得するための補助機能です。
 image.addEventListener('click', (event) => {
   const rect = image.getBoundingClientRect();
@@ -296,4 +311,5 @@ image.addEventListener('click', (event) => {
 
 closeButton.addEventListener('click', closeModal);
 overlay.addEventListener('click', closeModal);
+persistSelectedProducts();
 renderSelectedProducts();

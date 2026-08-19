@@ -58,6 +58,13 @@ test('選択した複数のタグをすべて持つ投稿だけを返す', () =>
   ]);
 });
 
+test('お気に入り投稿IDで絞り込める', () => {
+  assert.deepEqual(searchPosts(posts, '', [], ['kitchen-1', 'kitchen-3']).map((post) => post.id), [
+    'kitchen-1',
+    'kitchen-3'
+  ]);
+});
+
 test('投稿IDと旧画像URLの両方で投稿を取得できる', () => {
   assert.equal(findPost(posts, { postId: 'kitchen-2' }).id, 'kitchen-2');
   assert.equal(findPost(posts, { legacyImage: 'kitchen3.jpg' }).id, 'kitchen-3');

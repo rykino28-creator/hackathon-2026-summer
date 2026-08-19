@@ -1,4 +1,4 @@
-export function searchPosts(posts, query, selectedTags = []) {
+export function searchPosts(posts, query, selectedTags = [], favoritePostIds = null) {
   const normalizedQuery = query.trim().toLowerCase();
   const normalizedTags = selectedTags.map((tag) => tag.trim().toLowerCase());
 
@@ -7,7 +7,8 @@ export function searchPosts(posts, query, selectedTags = []) {
     const searchableText = postTags.join(' ');
     const matchesQuery = !normalizedQuery || searchableText.includes(normalizedQuery);
     const matchesTags = normalizedTags.every((selectedTag) => postTags.includes(selectedTag));
-    return matchesQuery && matchesTags;
+    const matchesFavorites = favoritePostIds === null || favoritePostIds.includes(post.id);
+    return matchesQuery && matchesTags && matchesFavorites;
   });
 }
 
