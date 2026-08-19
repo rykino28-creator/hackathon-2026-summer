@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新規投稿 - みんなのキッチン</title>
     <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./upload.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -38,10 +39,38 @@
                 </select>
                 <button id="confirmPinBtn" class="cart-add-btn compact-button">ピンを確定する</button>
             </div>
+
+            <section class="upload-form-section selected-products-section" id="selectedProductsSection" hidden>
+                <h2>選択済み商品</h2>
+                <div class="product-strip upload-product-strip" id="selectedProductStrip"></div>
+            </section>
+
+            <section class="upload-form-section" aria-labelledby="uploadTagsTitle">
+                <h2 id="uploadTagsTitle">投稿タグ</h2>
+                <p class="upload-section-guide">投稿に合うタグを1つ以上選択してください。</p>
+                <div class="upload-tag-groups" id="uploadTagGroups"></div>
+
+                <button class="add-free-tag-button" id="showFreeTagButton" type="button">
+                    <span aria-hidden="true">＋</span> 自由タグを追加
+                </button>
+                <div class="free-tag-form" id="freeTagForm" hidden>
+                    <input id="freeTagInput" type="text" maxlength="24" placeholder="自由タグを入力" aria-label="自由タグ">
+                    <button id="addFreeTagButton" type="button">追加</button>
+                </div>
+                <div class="filter-chips free-tag-list" id="freeTagList"></div>
+            </section>
+
+            <section class="upload-form-section" aria-labelledby="uploadDescriptionTitle">
+                <label for="descriptionInput">
+                    <h2 id="uploadDescriptionTitle">投稿者からの説明</h2>
+                </label>
+                <textarea id="descriptionInput" maxlength="500" rows="6"
+                    placeholder="収納の工夫やお気に入りのポイントなどを自由に入力してください。"></textarea>
+            </section>
         </main>
 
         <div class="bottom-action">
-            <button id="submitBtn" class="cart-add-btn submit-button">この内容で投稿する</button>
+            <button id="submitBtn" class="cart-add-btn submit-button" disabled>この内容で投稿する</button>
         </div>
     </div>
 

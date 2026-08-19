@@ -1,5 +1,8 @@
-import { products } from './data.js';
+import itemTempThumbnailUrl from '../images/item-temp-thumbnail.png';
+import { products, productsById } from './data.js';
+import { FILTER_TAG_GROUPS } from './lib/filter-tags.js';
 import { formatPrice } from './lib/posts.js';
+import { canSubmitPost, normalizeFreeTag } from './lib/upload.js';
 
 const imageInput = document.getElementById('imageInput');
 const uploadLabel = document.getElementById('uploadLabel');
@@ -8,10 +11,22 @@ const previewImage = document.getElementById('previewImage');
 const productSelectArea = document.getElementById('productSelectArea');
 const productDropdown = document.getElementById('productDropdown');
 const confirmPinButton = document.getElementById('confirmPinBtn');
+const selectedProductsSection = document.getElementById('selectedProductsSection');
+const selectedProductStrip = document.getElementById('selectedProductStrip');
+const uploadTagGroups = document.getElementById('uploadTagGroups');
+const showFreeTagButton = document.getElementById('showFreeTagButton');
+const freeTagForm = document.getElementById('freeTagForm');
+const freeTagInput = document.getElementById('freeTagInput');
+const addFreeTagButton = document.getElementById('addFreeTagButton');
+const freeTagList = document.getElementById('freeTagList');
+const descriptionInput = document.getElementById('descriptionInput');
 const submitButton = document.getElementById('submitBtn');
 
 let currentTempPin = null;
+let hasImage = false;
 const confirmedPins = [];
+const selectedTags = new Set();
+const freeTags = [];
 
 products.forEach((product) => {
   const option = document.createElement('option');
@@ -19,6 +34,134 @@ products.forEach((product) => {
   option.textContent = `${product.name}（${formatPrice(product.price)}）`;
   productDropdown.appendChild(option);
 });
+
+function updateSubmitState() {
+  const isReady = canSubmitPost({
+    hasImage,
+    pinCount: confirmedPins.length,
+    tagCount: selectedTags.size
+  });
+  submitButton.disabled = !isReady;
+  submitButton.classList.toggle('is-ready', isReady);
+}
+
+function createSelectedProductCard(pinData) {
+  const product = productsById[pinData.representativeProductId];
+  if (!product) return null;
+
+  const card = document.createElement('article');
+  card.className = 'product-card product-card--nitori upload-product-card';
+
+  const image = document.createElement('img');
+  image.src = itemTempThumbnailUrl;
+  image.alt = product.name;
+
+  const details = document.createElement('div');
+  details.className = 'upload-product-details';
+
+  const name = document.createElement('span');
+  name.className = 'product-card-name';
+  name.textContent = product.name;
+
+  const price = document.createElement('span');
+  price.className = 'product-card-price';
+  price.textContent = formatPrice(product.price);
+
+  const removeButton = document.createElement('button');
+  removeButton.type = 'button';
+  removeButton.className = 'upload-product-remove';
+  removeButton.textContent = '×';
+  removeButton.setAttribute('aria-label', `${product.name}のピンを取り外す`);
+  removeButton.addEventListener('click', () => removeConfirmedPin(pinData.id));
+
+  details.append(name, price);
+  card.append(image, details, removeButton);
+  return card;
+}
+
+function renderConfirmedProducts() {
+  const cards = confirmedPins.map(createSelectedProductCard).filter(Boolean);
+  selectedProductStrip.replaceChildren(...cards);
+  selectedProductsSection.hidden = cards.length === 0;
+  updateSubmitState();
+}
+
+function removeConfirmedPin(pinId) {
+  const index = confirmedPins.findIndex((pin) => pin.id === pinId);
+  if (index === -1) return;
+
+  const pinData = confirmedPins[index];
+  const product = productsById[pinData.representativeProductId];
+  if (!window.confirm(`「${product?.name || '選択された商品'}」のピンを取り外しますか？`)) return;
+
+  confirmedPins.splice(index, 1);
+  previewWrap.querySelector(`[data-pin-id="${CSS.escape(pinId)}"]`)?.remove();
+  renderConfirmedProducts();
+}
+
+function updateTagButton(button, tag) {
+  const isSelected = selectedTags.has(tag);
+  button.classList.toggle('is-selected', isSelected);
+  button.setAttribute('aria-pressed', String(isSelected));
+  button.replaceChildren(document.createTextNode(tag));
+  if (isSelected) {
+    const removeMark = document.createElement('span');
+    removeMark.className = 'filter-chip-remove';
+    removeMark.setAttribute('aria-hidden', 'true');
+    removeMark.textContent = '×';
+    button.appendChild(removeMark);
+  }
+}
+
+function createTagButton(tag, extraClass = '') {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = `filter-chip upload-tag-chip ${extraClass}`.trim();
+  button.dataset.tag = tag;
+  button.addEventListener('click', () => {
+    if (selectedTags.has(tag)) selectedTags.delete(tag);
+    else selectedTags.add(tag);
+    updateTagButton(button, tag);
+    updateSubmitState();
+  });
+  updateTagButton(button, tag);
+  return button;
+}
+
+function renderTagGroups() {
+  FILTER_TAG_GROUPS.forEach((group) => {
+    const section = document.createElement('section');
+    section.className = 'upload-tag-group';
+
+    const heading = document.createElement('h3');
+    heading.textContent = group.label;
+
+    const chips = document.createElement('div');
+    chips.className = 'filter-chips';
+    chips.append(...group.tags.map((tag) => createTagButton(tag)));
+
+    section.append(heading, chips);
+    uploadTagGroups.appendChild(section);
+  });
+}
+
+function addFreeTag() {
+  const tag = normalizeFreeTag(freeTagInput.value);
+  if (!tag) return;
+
+  const existingButton = document.querySelector(`.upload-tag-chip[data-tag="${CSS.escape(tag)}"]`);
+  if (existingButton) {
+    selectedTags.add(tag);
+    updateTagButton(existingButton, tag);
+  } else {
+    freeTags.push(tag);
+    selectedTags.add(tag);
+    freeTagList.appendChild(createTagButton(tag, 'free-tag-chip'));
+  }
+
+  freeTagInput.value = '';
+  updateSubmitState();
+}
 
 imageInput.addEventListener('change', (event) => {
   const [file] = event.target.files;
@@ -29,7 +172,8 @@ imageInput.addEventListener('change', (event) => {
     previewImage.src = target.result;
     uploadLabel.style.display = 'none';
     previewWrap.style.display = 'block';
-    submitButton.classList.add('is-ready');
+    hasImage = true;
+    updateSubmitState();
   };
   reader.readAsDataURL(file);
 });
@@ -51,26 +195,6 @@ previewImage.addEventListener('click', (event) => {
   productSelectArea.style.display = 'block';
 });
 
-// 確定済みのピンを削除する関数
-function removeConfirmedPin(pinId, pinElement) {
-  const pinData = confirmedPins.find(p => p.id === pinId);
-  if (!pinData) return;
-
-  // products から商品名を取得して確認ダイアログを表示
-  const product = products.find(p => p.id === pinData.productId);
-  const productName = product ? product.name : '選択された商品';
-
-  if (window.confirm(`「${productName}」のピンを取り外しますか？`)) {
-    // 1. 配列から削除
-    const index = confirmedPins.findIndex(p => p.id === pinId);
-    if (index !== -1) {
-      confirmedPins.splice(index, 1);
-    }
-    // 2. DOMから要素を削除
-    pinElement.remove();
-  }
-}
-
 confirmPinButton.addEventListener('click', () => {
   if (!currentTempPin) return;
   const productId = productDropdown.value;
@@ -80,45 +204,54 @@ confirmPinButton.addEventListener('click', () => {
   }
 
   const pinId = crypto.randomUUID();
-
-  // 確定ピンデータを追加
-  confirmedPins.push({
+  const pinData = {
     id: pinId,
     sourceType: 'nitori',
-    representativeProductId: productDropdown.value,
-    productId: productId,
+    representativeProductId: productId,
     x: Number(currentTempPin.dataset.x),
     y: Number(currentTempPin.dataset.y),
-    products: [
-      { productId: productDropdown.value, relation: 'exact' }
-    ]
-  });
+    products: [{ productId, relation: 'exact' }]
+  };
+  confirmedPins.push(pinData);
 
-  // 一時ピンを確定ピンに変換
   const confirmedPinElement = currentTempPin;
   confirmedPinElement.classList.remove('item-pin--temporary');
   confirmedPinElement.dataset.pinId = pinId;
-
-  // ★重要: 確定ピンをクリックしたときに削除（取り外し）できるようにイベントを登録
   confirmedPinElement.addEventListener('click', (event) => {
-    event.stopPropagation(); // 画像クリックイベントの発火を防ぐ
-    removeConfirmedPin(pinId, confirmedPinElement);
+    event.stopPropagation();
+    removeConfirmedPin(pinId);
   });
 
-  // 状態のリセット（これで次のピンを連続して追加できるようになります）
   currentTempPin = null;
   productDropdown.value = '';
   productSelectArea.style.display = 'none';
+  renderConfirmedProducts();
 });
 
+showFreeTagButton.addEventListener('click', () => {
+  freeTagForm.hidden = false;
+  freeTagInput.focus();
+});
+addFreeTagButton.addEventListener('click', addFreeTag);
+freeTagInput.addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  addFreeTag();
+});
 
 submitButton.addEventListener('click', () => {
-  if (!submitButton.classList.contains('is-ready')) return;
+  if (submitButton.disabled) return;
 
   console.log('投稿デモデータ:', {
     image: previewImage.src,
-    pins: confirmedPins
+    pins: confirmedPins,
+    tags: [...selectedTags],
+    customTags: freeTags,
+    description: descriptionInput.value.trim()
   });
   window.alert('【デモ】投稿が完了しました！\n（保存機能は次の段階で実装します）');
   window.location.href = 'index.html';
 });
+
+renderTagGroups();
+renderConfirmedProducts();
