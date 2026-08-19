@@ -1,13 +1,7 @@
 import { posts } from './data.js';
 import { isPostFavorite, togglePostFavorite } from './favorites.js';
+import { FILTER_TAG_GROUPS } from './lib/filter-tags.js';
 import { searchPosts } from './lib/posts.js';
-
-const filterGroups = [
-  { label: 'サイズ', tags: ['コンパクト', 'スタンダード', 'ワイド'] },
-  { label: '場面', tags: ['一人暮らし', 'ファミリー', '料理こだわり', '収納'] },
-  { label: 'テーマ', tags: ['モダン', 'ウッディ', 'ナチュラル', 'シンプル'] },
-  { label: 'カラー', tags: ['ブラウン', 'グリーン', 'ホワイト', 'ブラック'] }
-];
 
 const urlParams = new URLSearchParams(window.location.search);
 const selectedTags = new Set(urlParams.getAll('tag'));
@@ -112,7 +106,7 @@ function updateFilterButtons() {
 }
 
 function createFilterGroups() {
-  filterGroups.forEach((group) => {
+  FILTER_TAG_GROUPS.forEach((group) => {
     const section = document.createElement('section');
     section.className = 'filter-group';
 

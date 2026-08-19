@@ -1,0 +1,142 @@
+.upload-content {
+    padding-bottom: 110px;
+}
+
+.upload-form-section {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid #eeeeee;
+}
+
+.upload-form-section h2 {
+    margin-bottom: 8px;
+    font-size: 17px;
+}
+
+.upload-section-guide {
+    margin-bottom: 18px;
+    color: #777777;
+    font-size: 13px;
+}
+
+.upload-product-strip {
+    margin-top: 14px;
+    margin-bottom: 0;
+}
+
+.upload-product-card {
+    flex-basis: 132px;
+}
+
+.upload-product-card img {
+    width: 100%;
+    height: 92px;
+    object-fit: cover;
+}
+
+.upload-product-remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(0, 0, 0, 0.16);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.94);
+    color: #555555;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.upload-product-details {
+    display: flex;
+    min-height: 86px;
+    padding: 9px 10px 11px;
+    flex-direction: column;
+}
+
+.upload-product-details .product-card-name,
+.upload-product-details .product-card-price {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.upload-product-details .product-card-price {
+    margin-top: auto;
+}
+
+.upload-tag-group + .upload-tag-group {
+    margin-top: 15px;
+}
+
+.upload-tag-group h3 {
+    margin-bottom: 8px;
+    color: #777777;
+    font-size: 12px;
+}
+
+.upload-tag-chip.is-selected {
+    border-color: #008f87;
+    background: #e6f5f3;
+    color: #007a74;
+    font-weight: bold;
+}
+
+.add-free-tag-button {
+    margin-top: 18px;
+    padding: 8px 12px;
+    border: 1px dashed #999999;
+    border-radius: 18px;
+    background: #ffffff;
+    color: #555555;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.free-tag-form {
+    display: grid;
+    gap: 8px;
+    margin-top: 12px;
+    grid-template-columns: minmax(0, 1fr) 64px;
+}
+
+.free-tag-form[hidden] {
+    display: none;
+}
+
+.free-tag-form input {
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.free-tag-form button {
+    border: 0;
+    border-radius: 6px;
+    background: #009E96;
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.free-tag-list:not(:empty) {
+    margin-top: 12px;
+}
+
+#descriptionInput {
+    width: 100%;
+    padding: 12px;
+    resize: vertical;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.submit-button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+}
