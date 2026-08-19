@@ -238,6 +238,20 @@ body {
     animation: pulse 2s infinite;
 }
 
+/* 確定ピンにホバーしたときに「×」などの削除イメージが湧きやすいようにカーソルなどを調整 */
+.item-pin:not(.item-pin--temporary) {
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.item-pin:not(.item-pin--temporary):hover {
+    transform: scale(1.2);
+    background-color: #ff4d4d;
+    /* ホバー時に赤くして削除可能であることを強調 */
+    border-color: #fff;
+}
+
+
 /* アニメーションの定義 */
 @keyframes pulse {
     0% {
