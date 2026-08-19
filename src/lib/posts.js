@@ -1,15 +1,14 @@
-export function searchPosts(posts, query) {
+export function searchPosts(posts, query, selectedTags = []) {
   const normalizedQuery = query.trim().toLowerCase();
-  if (!normalizedQuery) return posts;
+  const normalizedTags = selectedTags.map((tag) => tag.trim().toLowerCase());
 
-  const matchedPosts = posts.filter((post) => {
-    const searchableText = [post.title, post.caption, ...post.keywords]
-      .join(' ')
-      .toLowerCase();
-    return searchableText.includes(normalizedQuery);
+  return posts.filter((post) => {
+    const postTags = (post.tags || []).map((tag) => tag.label.toLowerCase());
+    const searchableText = postTags.join(' ');
+    const matchesQuery = !normalizedQuery || searchableText.includes(normalizedQuery);
+    const matchesTags = normalizedTags.every((selectedTag) => postTags.includes(selectedTag));
+    return matchesQuery && matchesTags;
   });
-
-  return matchedPosts.length > 0 ? matchedPosts : posts.slice(0, 2);
 }
 
 export function findPost(posts, { postId, legacyImage }) {

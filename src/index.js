@@ -2,14 +2,36 @@ import { posts } from './data.js';
 import { isPostFavorite, togglePostFavorite } from './favorites.js';
 import { searchPosts } from './lib/posts.js';
 
+const filterGroups = [
+  { label: 'サイズ', tags: ['コンパクト', 'スタンダード', 'ワイド'] },
+  { label: '場面', tags: ['一人暮らし', 'ファミリー', '料理こだわり', '収納'] },
+  { label: 'テーマ', tags: ['モダン', 'ウッディ', 'ナチュラル', 'シンプル'] },
+  { label: 'カラー', tags: ['ブラウン', 'グリーン', 'ホワイト', 'ブラック'] }
+];
+
 const urlParams = new URLSearchParams(window.location.search);
-const query = urlParams.get('q') || 'フライパン';
+const selectedTags = new Set(urlParams.getAll('tag'));
 const searchInput = document.getElementById('searchInput');
+const searchForm = document.getElementById('searchForm');
 const imageGrid = document.getElementById('imageGrid');
+const searchSummary = document.getElementById('searchSummary');
+const filterToggle = document.getElementById('filterToggle');
+const filterPanel = document.getElementById('filterPanel');
+const filterGroupsContainer = document.getElementById('filterGroups');
+const filterClear = document.getElementById('filterClear');
 
-searchInput.value = query;
+searchInput.value = urlParams.get('q') || '';
 
-searchPosts(posts, query).forEach((post) => {
+function updateUrl() {
+  const params = new URLSearchParams();
+  const query = searchInput.value.trim();
+  if (query) params.set('q', query);
+  selectedTags.forEach((tag) => params.append('tag', tag));
+  const nextUrl = params.size > 0 ? `?${params.toString()}` : window.location.pathname;
+  window.history.replaceState({}, '', nextUrl);
+}
+
+function createPostTile(post) {
   const tile = document.createElement('article');
   tile.className = 'post-tile';
 
@@ -44,5 +66,86 @@ searchPosts(posts, query).forEach((post) => {
   });
 
   tile.appendChild(favoriteButton);
-  imageGrid.appendChild(tile);
+  return tile;
+}
+
+function renderPosts() {
+  const query = searchInput.value;
+  const matchedPosts = searchPosts(posts, query, [...selectedTags]);
+  imageGrid.replaceChildren(...matchedPosts.map(createPostTile));
+
+  const isFiltering = query.trim() || selectedTags.size > 0;
+  searchSummary.textContent = isFiltering ? `${matchedPosts.length}件の投稿が見つかりました` : '';
+  searchSummary.classList.toggle('is-empty', isFiltering && matchedPosts.length === 0);
+  filterClear.hidden = selectedTags.size === 0;
+  updateUrl();
+}
+
+function updateFilterButtons() {
+  filterGroupsContainer.querySelectorAll('.filter-chip').forEach((button) => {
+    const isSelected = selectedTags.has(button.dataset.tag);
+    button.classList.toggle('is-selected', isSelected);
+    button.setAttribute('aria-pressed', String(isSelected));
+    button.replaceChildren(document.createTextNode(button.dataset.tag));
+    if (isSelected) {
+      const removeMark = document.createElement('span');
+      removeMark.className = 'filter-chip-remove';
+      removeMark.setAttribute('aria-hidden', 'true');
+      removeMark.textContent = '×';
+      button.appendChild(removeMark);
+    }
+  });
+  filterToggle.classList.toggle('has-selection', selectedTags.size > 0);
+}
+
+function createFilterGroups() {
+  filterGroups.forEach((group) => {
+    const section = document.createElement('section');
+    section.className = 'filter-group';
+
+    const heading = document.createElement('h2');
+    heading.textContent = group.label;
+    section.appendChild(heading);
+
+    const chips = document.createElement('div');
+    chips.className = 'filter-chips';
+    group.tags.forEach((tag) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'filter-chip';
+      button.dataset.tag = tag;
+      button.addEventListener('click', () => {
+        if (selectedTags.has(tag)) selectedTags.delete(tag);
+        else selectedTags.add(tag);
+        updateFilterButtons();
+        renderPosts();
+      });
+      chips.appendChild(button);
+    });
+    section.appendChild(chips);
+    filterGroupsContainer.appendChild(section);
+  });
+  updateFilterButtons();
+}
+
+function setFilterPanel(isOpen) {
+  filterPanel.hidden = !isOpen;
+  filterToggle.classList.toggle('is-open', isOpen);
+  filterToggle.setAttribute('aria-expanded', String(isOpen));
+}
+
+filterToggle.addEventListener('click', () => setFilterPanel(filterPanel.hidden));
+filterClear.addEventListener('click', () => {
+  selectedTags.clear();
+  updateFilterButtons();
+  renderPosts();
 });
+searchForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  renderPosts();
+});
+searchInput.addEventListener('input', renderPosts);
+
+createFilterGroups();
+setFilterPanel(selectedTags.size > 0);
+renderPosts();
