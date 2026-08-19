@@ -19,7 +19,20 @@ test('全ピンのID・座標・商品参照が正しい', () => {
       assert.ok(pin.id);
       assert.equal(pinIds.has(pin.id), false);
       pinIds.add(pin.id);
-      assert.ok(productIds.has(pin.productId));
+      assert.ok(['nitori', 'non-nitori'].includes(pin.sourceType));
+      assert.ok(productIds.has(pin.representativeProductId));
+      assert.ok(pin.products.length > 0);
+      assert.ok(pin.products.some((item) => item.productId === pin.representativeProductId));
+      pin.products.forEach((item) => {
+        assert.ok(productIds.has(item.productId));
+        assert.ok(['exact', 'similar', 'alternative'].includes(item.relation));
+      });
+
+      if (pin.sourceType === 'nitori') {
+        assert.equal(pin.products.filter((item) => item.relation === 'exact').length, 1);
+      } else {
+        assert.ok(pin.products.every((item) => item.relation === 'alternative'));
+      }
       assert.ok(pin.x >= 0 && pin.x <= 100);
       assert.ok(pin.y >= 0 && pin.y <= 100);
     });

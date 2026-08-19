@@ -84,9 +84,14 @@ confirmPinButton.addEventListener('click', () => {
   // 確定ピンデータを追加
   confirmedPins.push({
     id: pinId,
+    sourceType: 'nitori',
+    representativeProductId: productDropdown.value,
     productId: productId,
     x: Number(currentTempPin.dataset.x),
-    y: Number(currentTempPin.dataset.y)
+    y: Number(currentTempPin.dataset.y),
+    products: [
+      { productId: productDropdown.value, relation: 'exact' }
+    ]
   });
 
   // 一時ピンを確定ピンに変換
