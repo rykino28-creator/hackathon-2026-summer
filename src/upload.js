@@ -51,17 +51,42 @@ previewImage.addEventListener('click', (event) => {
   productSelectArea.style.display = 'block';
 });
 
+// 確定済みのピンを削除する関数
+function removeConfirmedPin(pinId, pinElement) {
+  const pinData = confirmedPins.find(p => p.id === pinId);
+  if (!pinData) return;
+
+  // products から商品名を取得して確認ダイアログを表示
+  const product = products.find(p => p.id === pinData.productId);
+  const productName = product ? product.name : '選択された商品';
+
+  if (window.confirm(`「${productName}」のピンを取り外しますか？`)) {
+    // 1. 配列から削除
+    const index = confirmedPins.findIndex(p => p.id === pinId);
+    if (index !== -1) {
+      confirmedPins.splice(index, 1);
+    }
+    // 2. DOMから要素を削除
+    pinElement.remove();
+  }
+}
+
 confirmPinButton.addEventListener('click', () => {
   if (!currentTempPin) return;
-  if (!productDropdown.value) {
+  const productId = productDropdown.value;
+  if (!productId) {
     window.alert('商品を選択してください！');
     return;
   }
 
+  const pinId = crypto.randomUUID();
+
+  // 確定ピンデータを追加
   confirmedPins.push({
-    id: crypto.randomUUID(),
+    id: pinId,
     sourceType: 'nitori',
     representativeProductId: productDropdown.value,
+    productId: productId,
     x: Number(currentTempPin.dataset.x),
     y: Number(currentTempPin.dataset.y),
     products: [
@@ -69,11 +94,23 @@ confirmPinButton.addEventListener('click', () => {
     ]
   });
 
-  currentTempPin.classList.remove('item-pin--temporary');
+  // 一時ピンを確定ピンに変換
+  const confirmedPinElement = currentTempPin;
+  confirmedPinElement.classList.remove('item-pin--temporary');
+  confirmedPinElement.dataset.pinId = pinId;
+
+  // ★重要: 確定ピンをクリックしたときに削除（取り外し）できるようにイベントを登録
+  confirmedPinElement.addEventListener('click', (event) => {
+    event.stopPropagation(); // 画像クリックイベントの発火を防ぐ
+    removeConfirmedPin(pinId, confirmedPinElement);
+  });
+
+  // 状態のリセット（これで次のピンを連続して追加できるようになります）
   currentTempPin = null;
   productDropdown.value = '';
   productSelectArea.style.display = 'none';
 });
+
 
 submitButton.addEventListener('click', () => {
   if (!submitButton.classList.contains('is-ready')) return;

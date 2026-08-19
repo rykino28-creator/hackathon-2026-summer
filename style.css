@@ -242,6 +242,20 @@ body {
     background-color: rgba(217, 119, 6, 0.82);
 }
 
+/* 確定ピンにホバーしたときに「×」などの削除イメージが湧きやすいようにカーソルなどを調整 */
+.item-pin:not(.item-pin--temporary) {
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.item-pin:not(.item-pin--temporary):hover {
+    transform: scale(1.2);
+    background-color: #ff4d4d;
+    /* ホバー時に赤くして削除可能であることを強調 */
+    border-color: #fff;
+}
+
+
 /* アニメーションの定義 */
 @keyframes pulse {
     0% {
@@ -780,6 +794,220 @@ body {
 .checkout-button:disabled {
     background: #b8d7d5;
     cursor: not-allowed;
+}
+
+.upload-header {
+    display: flex;
+    align-items: center;
+}
+
+.upload-header h2 {
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 70px;
+    font-size: 16px;
+}
+
+.upload-content {
+    padding: 16px;
+}
+
+.preview-wrap {
+    display: none;
+    margin-top: 16px;
+}
+
+.pin-guide {
+    margin-bottom: 8px;
+    color: #009E96;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.preview-image {
+    border-radius: 8px;
+}
+
+.product-select-area {
+    display: none;
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 8px;
+    background: #f5f5f5;
+}
+
+.product-select-area p {
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.product-select-area select {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.compact-button {
+    padding: 12px;
+}
+
+.submit-button {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.submit-button.is-ready {
+    background-color: #009E96;
+    cursor: pointer;
+}
+
+.item-pin--temporary {
+    background-color: #e60012;
+    animation: none;
+}
+.upload-btn:active {
+    background-color: #eeeeee;
+}
+
+.post-details {
+    padding: 20px 16px 110px;
+}
+
+.related-products h2,
+.post-tags h2,
+.post-description h2 {
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+.product-strip {
+    display: flex;
+    gap: 12px;
+    margin: 0 -16px 20px;
+    padding: 0 16px 8px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+}
+
+.product-strip::-webkit-scrollbar {
+    display: none;
+}
+
+.product-card {
+    position: relative;
+    flex: 0 0 132px;
+    overflow: hidden;
+    border: 1px solid #eeeeee;
+    border-radius: 8px;
+    background: #ffffff;
+    scroll-snap-align: start;
+}
+
+.product-card-main {
+    display: flex;
+    width: 100%;
+    padding: 0 0 10px;
+    border: none;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    flex-direction: column;
+}
+
+.product-card-main img {
+    width: 100%;
+    height: 92px;
+    margin-bottom: 8px;
+    object-fit: cover;
+}
+
+.product-card-name {
+    display: -webkit-box;
+    min-height: 34px;
+    margin: 0 10px 6px;
+    overflow: hidden;
+    font-size: 12px;
+    line-height: 1.4;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.product-card-price {
+    margin: 0 10px;
+    color: #e60012;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.product-card-favorite {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: #333333;
+    font-size: 19px;
+    cursor: pointer;
+}
+
+.product-card-favorite.is-favorite {
+    color: #e60012;
+}
+
+.detail-favorite-button {
+    width: 100%;
+    margin-bottom: 24px;
+    padding: 13px 16px;
+    border: 1px solid #999999;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #333333;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.detail-favorite-button.is-favorite {
+    border-color: #e60012;
+    color: #e60012;
+}
+
+.tag-list {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tag-chip {
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: #f1f1f1;
+    color: #555555;
+    font-size: 13px;
+}
+
+.post-description {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #eeeeee;
+}
+
+.post-description p {
+    color: #555555;
+    font-size: 14px;
+    line-height: 1.8;
+    white-space: pre-wrap;
 }
 
 .upload-header {
