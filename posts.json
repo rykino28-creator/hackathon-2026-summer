@@ -13,7 +13,12 @@
             "tags": [
                 { "id": "tag-pan", "label": "フライパン" },
                 { "id": "tag-compact", "label": "コンパクトキッチン" },
-                { "id": "tag-show-storage", "label": "見せる収納" }
+                { "id": "tag-show-storage", "label": "見せる収納" },
+                { "id": "filter-compact", "label": "コンパクト" },
+                { "id": "filter-single", "label": "一人暮らし" },
+                { "id": "filter-cooking", "label": "料理こだわり" },
+                { "id": "filter-modern", "label": "モダン" },
+                { "id": "filter-black", "label": "ブラック" }
             ],
             "image": "./images/kitchen1.jpg",
             "thumbnail": "./images/kitchen1.jpg",
@@ -67,7 +72,12 @@
             },
             "tags": [
                 { "id": "tag-wall", "label": "壁面収納" },
-                { "id": "tag-spice", "label": "スパイス収納" }
+                { "id": "tag-spice", "label": "スパイス収納" },
+                { "id": "filter-standard", "label": "スタンダード" },
+                { "id": "filter-family", "label": "ファミリー" },
+                { "id": "filter-storage", "label": "収納" },
+                { "id": "filter-woody", "label": "ウッディ" },
+                { "id": "filter-brown", "label": "ブラウン" }
             ],
             "image": "./images/kitchen2.jpg",
             "thumbnail": "./images/kitchen2.jpg",
@@ -111,7 +121,12 @@
                 { "id": "tag-pan", "label": "フライパン" },
                 { "id": "tag-hanging", "label": "吊り下げ収納" },
                 { "id": "tag-simple", "label": "シンプル" },
-                { "id": "tag-natural", "label": "ナチュラル" }
+                { "id": "tag-natural", "label": "ナチュラル" },
+                { "id": "filter-wide", "label": "ワイド" },
+                { "id": "filter-cooking", "label": "料理こだわり" },
+                { "id": "filter-storage", "label": "収納" },
+                { "id": "filter-woody", "label": "ウッディ" },
+                { "id": "filter-green", "label": "グリーン" }
             ],
             "image": "./images/kitchen3.jpg",
             "thumbnail": "./images/kitchen3.jpg",
@@ -176,7 +191,12 @@
             "tags": [
                 { "id": "tag-rack", "label": "キッチンラック" },
                 { "id": "tag-white", "label": "ホワイトインテリア" },
-                { "id": "tag-sink", "label": "シンク周り" }
+                { "id": "tag-sink", "label": "シンク周り" },
+                { "id": "filter-compact", "label": "コンパクト" },
+                { "id": "filter-single", "label": "一人暮らし" },
+                { "id": "filter-storage", "label": "収納" },
+                { "id": "filter-modern", "label": "モダン" },
+                { "id": "filter-white", "label": "ホワイト" }
             ],
             "image": "./images/kitchen4.jpg",
             "thumbnail": "./images/kitchen4.jpg",

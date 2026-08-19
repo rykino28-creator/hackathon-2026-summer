@@ -12,10 +12,25 @@
 <body>
     <div class="app-container">
         <header class="header">
-            <form class="search-bar" action="index.html" method="GET">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" name="q" id="searchInput" placeholder="アイテムを検索...">
-            </form>
+            <div class="search-area">
+                <form class="search-bar" id="searchForm" action="index.html" method="GET">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="search" name="q" id="searchInput" placeholder="投稿タグを検索..." autocomplete="off">
+                    <button class="filter-toggle" id="filterToggle" type="button" aria-label="タグで絞り込む"
+                        aria-controls="filterPanel" aria-expanded="false">
+                        <svg viewBox="0 0 28 24" aria-hidden="true">
+                            <path d="M3 7h12M21 7h4M3 17h4M13 17h12"></path>
+                            <circle cx="18" cy="7" r="3"></circle>
+                            <circle cx="10" cy="17" r="3"></circle>
+                        </svg>
+                    </button>
+                </form>
+
+                <section class="filter-panel" id="filterPanel" aria-label="タグの絞り込み" hidden>
+                    <div id="filterGroups"></div>
+                    <button class="filter-clear" id="filterClear" type="button" hidden>選択をすべて解除</button>
+                </section>
+            </div>
 
             <div class="tabs">
                 <div class="tab">商品一覧</div>
@@ -24,6 +39,7 @@
         </header>
 
         <main class="content">
+            <p class="search-summary" id="searchSummary" aria-live="polite"></p>
             <div class="image-grid" id="imageGrid"></div>
         </main>
 
