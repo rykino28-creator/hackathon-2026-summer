@@ -26,21 +26,30 @@
                     </button>
                 </form>
 
+                <div class="active-filter-bar" id="activeFilterBar" aria-label="設定中の検索タグ">
+                    <div class="active-filter-list" id="activeFilterList"></div>
+                    <button class="filter-chip add-filter-button" id="addFilterButton" type="button">＋ タグを追加</button>
+                </div>
+
                 <div class="filter-overlay" id="filterOverlay" hidden></div>
 
                 <section class="filter-panel" id="filterPanel" role="dialog" aria-modal="true"
                     aria-label="タグの絞り込み" hidden>
-                    <button class="filter-chip favorite-filter" id="favoriteFilter" type="button"
-                        aria-pressed="false"></button>
-                    <div id="filterGroups"></div>
-                    <button class="filter-clear" id="filterClear" type="button" hidden>選択をすべて解除</button>
-                    <button class="filter-apply" id="filterApply" type="button">この条件で検索</button>
-                </section>
-            </div>
+                    <div class="guided-filter" id="guidedFilter" hidden>
+                        <p class="guided-filter-kicker">あなたのキッチンについて教えてください</p>
+                        <p class="guided-filter-step" id="guidedFilterStep"></p>
+                        <h2 id="guidedFilterTitle"></h2>
+                        <div class="filter-chips guided-filter-choices" id="guidedFilterChoices"></div>
+                    </div>
 
-            <div class="tabs">
-                <div class="tab">商品一覧</div>
-                <div class="tab active">みんなのキッチン</div>
+                    <div id="regularFilter">
+                        <button class="filter-chip favorite-filter" id="favoriteFilter" type="button"
+                            aria-pressed="false"></button>
+                        <div id="filterGroups"></div>
+                        <button class="filter-clear" id="filterClear" type="button" hidden>選択をすべて解除</button>
+                        <button class="filter-apply" id="filterApply" type="button">この条件で検索</button>
+                    </div>
+                </section>
             </div>
         </header>
 

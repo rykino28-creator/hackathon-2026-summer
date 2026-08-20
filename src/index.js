@@ -2,10 +2,20 @@ import { posts } from './data.js';
 import { isPostFavorite, togglePostFavorite } from './favorites.js';
 import { FILTER_TAG_GROUPS } from './lib/filter-tags.js';
 import { searchPosts } from './lib/posts.js';
+import {
+  loadSearchProfile,
+  replaceCategorySelection,
+  saveSearchProfile
+} from './lib/search-profile.js';
 
 const urlParams = new URLSearchParams(window.location.search);
-const selectedTags = new Set(urlParams.getAll('tag'));
+const searchProfile = loadSearchProfile(window.localStorage);
+const urlTags = urlParams.getAll('tag');
+const selectedTags = new Set(urlTags.length > 0 ? urlTags : searchProfile.tags);
 let favoritesOnly = urlParams.get('favorite') === '1';
+let guidedStepIndex = 0;
+let isGuidedMode = !searchProfile.completed;
+
 const searchInput = document.getElementById('searchInput');
 const searchForm = document.getElementById('searchForm');
 const imageGrid = document.getElementById('imageGrid');
@@ -17,8 +27,21 @@ const filterClear = document.getElementById('filterClear');
 const favoriteFilter = document.getElementById('favoriteFilter');
 const filterOverlay = document.getElementById('filterOverlay');
 const filterApply = document.getElementById('filterApply');
+const regularFilter = document.getElementById('regularFilter');
+const guidedFilter = document.getElementById('guidedFilter');
+const guidedFilterStep = document.getElementById('guidedFilterStep');
+const guidedFilterTitle = document.getElementById('guidedFilterTitle');
+const guidedFilterChoices = document.getElementById('guidedFilterChoices');
+const activeFilterList = document.getElementById('activeFilterList');
+const addFilterButton = document.getElementById('addFilterButton');
 
 searchInput.value = urlParams.get('q') || '';
+
+function persistSelectedTags() {
+  if (searchProfile.completed || !isGuidedMode) {
+    saveSearchProfile(window.localStorage, [...selectedTags]);
+  }
+}
 
 function updateUrl() {
   const params = new URLSearchParams();
@@ -41,7 +64,6 @@ function createPostTile(post) {
   const image = document.createElement('img');
   image.src = post.thumbnail;
   image.alt = post.title;
-
   link.appendChild(image);
   tile.appendChild(link);
 
@@ -85,8 +107,44 @@ function renderPosts() {
   updateUrl();
 }
 
+function createActiveFilterChip(label, onRemove, isFavorite = false) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'filter-chip is-selected active-filter-chip';
+  button.setAttribute('aria-label', `${label}を検索条件から解除`);
+  button.textContent = isFavorite ? '♥ お気に入り' : label;
+
+  const removeMark = document.createElement('span');
+  removeMark.className = 'filter-chip-remove';
+  removeMark.setAttribute('aria-hidden', 'true');
+  removeMark.textContent = '×';
+  button.appendChild(removeMark);
+  button.addEventListener('click', onRemove);
+  return button;
+}
+
+function renderActiveFilters() {
+  const chips = [...selectedTags].map((tag) => createActiveFilterChip(tag, () => {
+    selectedTags.delete(tag);
+    persistSelectedTags();
+    updateFilterButtons();
+    renderActiveFilters();
+    renderPosts();
+  }));
+
+  if (favoritesOnly) {
+    chips.push(createActiveFilterChip('お気に入り', () => {
+      favoritesOnly = false;
+      updateFilterButtons();
+      renderActiveFilters();
+      renderPosts();
+    }, true));
+  }
+  activeFilterList.replaceChildren(...chips);
+}
+
 function updateFilterButtons() {
-  filterGroupsContainer.querySelectorAll('.filter-chip').forEach((button) => {
+  filterGroupsContainer.querySelectorAll('.filter-chip[data-tag]').forEach((button) => {
     const isSelected = selectedTags.has(button.dataset.tag);
     button.classList.toggle('is-selected', isSelected);
     button.setAttribute('aria-pressed', String(isSelected));
@@ -101,10 +159,17 @@ function updateFilterButtons() {
   });
   favoriteFilter.classList.toggle('is-selected', favoritesOnly);
   favoriteFilter.setAttribute('aria-pressed', String(favoritesOnly));
-  favoriteFilter.textContent = favoritesOnly
-    ? '♥ お気に入り ×'
-    : '♡ お気に入り';
+  favoriteFilter.textContent = favoritesOnly ? '♥ お気に入り ×' : '♡ お気に入り';
   filterToggle.classList.toggle('has-selection', selectedTags.size > 0 || favoritesOnly);
+}
+
+function toggleRegularTag(tag) {
+  if (selectedTags.has(tag)) selectedTags.delete(tag);
+  else selectedTags.add(tag);
+  persistSelectedTags();
+  updateFilterButtons();
+  renderActiveFilters();
+  renderPosts();
 }
 
 function createFilterGroups() {
@@ -114,7 +179,6 @@ function createFilterGroups() {
 
     const heading = document.createElement('h2');
     heading.textContent = group.label;
-    section.appendChild(heading);
 
     const chips = document.createElement('div');
     chips.className = 'filter-chips';
@@ -123,16 +187,11 @@ function createFilterGroups() {
       button.type = 'button';
       button.className = 'filter-chip';
       button.dataset.tag = tag;
-      button.addEventListener('click', () => {
-        if (selectedTags.has(tag)) selectedTags.delete(tag);
-        else selectedTags.add(tag);
-        updateFilterButtons();
-        renderPosts();
-      });
+      button.addEventListener('click', () => toggleRegularTag(tag));
       chips.appendChild(button);
     });
     if (group.label === 'カラー') chips.appendChild(favoriteFilter);
-    section.appendChild(chips);
+    section.append(heading, chips);
     filterGroupsContainer.appendChild(section);
   });
   updateFilterButtons();
@@ -146,8 +205,82 @@ function setFilterPanel(isOpen) {
   filterToggle.setAttribute('aria-expanded', String(isOpen));
 }
 
-filterToggle.addEventListener('click', () => setFilterPanel(filterPanel.hidden));
-filterOverlay.addEventListener('click', () => setFilterPanel(false));
+function openRegularFilters() {
+  isGuidedMode = false;
+  guidedFilter.hidden = true;
+  regularFilter.hidden = false;
+  updateFilterButtons();
+  setFilterPanel(true);
+}
+
+function advanceGuidedStep() {
+  if (guidedStepIndex < FILTER_TAG_GROUPS.length - 1) {
+    guidedStepIndex += 1;
+    renderGuidedStep();
+  } else {
+    completeGuidedOnboarding();
+  }
+}
+
+function renderGuidedStep() {
+  const group = FILTER_TAG_GROUPS[guidedStepIndex];
+  guidedFilterStep.textContent = `${guidedStepIndex + 1} / ${FILTER_TAG_GROUPS.length}`;
+  guidedFilterTitle.textContent = `${group.label}を選んでください`;
+
+  const buttons = group.tags.map((tag) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'filter-chip guided-filter-chip';
+    const isSelected = selectedTags.has(tag);
+    button.classList.toggle('is-selected', isSelected);
+    button.setAttribute('aria-pressed', String(isSelected));
+    button.textContent = tag;
+    button.addEventListener('click', () => {
+      const nextTags = replaceCategorySelection([...selectedTags], group.tags, tag);
+      selectedTags.clear();
+      nextTags.forEach((selectedTag) => selectedTags.add(selectedTag));
+      advanceGuidedStep();
+    });
+    return button;
+  });
+
+  const noPreferenceButton = document.createElement('button');
+  noPreferenceButton.type = 'button';
+  noPreferenceButton.className = 'filter-chip guided-filter-chip guided-no-preference';
+  noPreferenceButton.textContent = 'こだわらない';
+  noPreferenceButton.addEventListener('click', () => {
+    const nextTags = replaceCategorySelection([...selectedTags], group.tags, null);
+    selectedTags.clear();
+    nextTags.forEach((selectedTag) => selectedTags.add(selectedTag));
+    advanceGuidedStep();
+  });
+
+  guidedFilterChoices.replaceChildren(...buttons, noPreferenceButton);
+}
+
+function startGuidedOnboarding() {
+  isGuidedMode = true;
+  guidedStepIndex = 0;
+  regularFilter.hidden = true;
+  guidedFilter.hidden = false;
+  renderGuidedStep();
+  setFilterPanel(true);
+}
+
+function completeGuidedOnboarding() {
+  saveSearchProfile(window.localStorage, [...selectedTags]);
+  isGuidedMode = false;
+  updateFilterButtons();
+  renderActiveFilters();
+  renderPosts();
+  setFilterPanel(false);
+}
+
+filterToggle.addEventListener('click', openRegularFilters);
+addFilterButton.addEventListener('click', openRegularFilters);
+filterOverlay.addEventListener('click', () => {
+  if (!isGuidedMode) setFilterPanel(false);
+});
 filterApply.addEventListener('click', () => {
   renderPosts();
   setFilterPanel(false);
@@ -155,12 +288,15 @@ filterApply.addEventListener('click', () => {
 favoriteFilter.addEventListener('click', () => {
   favoritesOnly = !favoritesOnly;
   updateFilterButtons();
+  renderActiveFilters();
   renderPosts();
 });
 filterClear.addEventListener('click', () => {
   selectedTags.clear();
   favoritesOnly = false;
+  persistSelectedTags();
   updateFilterButtons();
+  renderActiveFilters();
   renderPosts();
 });
 searchForm.addEventListener('submit', (event) => {
@@ -169,9 +305,11 @@ searchForm.addEventListener('submit', (event) => {
 });
 searchInput.addEventListener('input', renderPosts);
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && !filterPanel.hidden) setFilterPanel(false);
+  if (event.key === 'Escape' && !filterPanel.hidden && !isGuidedMode) setFilterPanel(false);
 });
 
 createFilterGroups();
-setFilterPanel(selectedTags.size > 0 || favoritesOnly);
+renderActiveFilters();
 renderPosts();
+if (isGuidedMode) startGuidedOnboarding();
+else setFilterPanel(false);

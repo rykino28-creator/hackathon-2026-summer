@@ -63,6 +63,37 @@ body {
     outline: none;
 }
 
+.active-filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    padding-bottom: 2px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+}
+
+.active-filter-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.active-filter-list {
+    display: flex;
+    gap: 8px;
+}
+
+.active-filter-chip,
+.add-filter-button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.add-filter-button {
+    order: -1;
+    border-style: dashed;
+    color: #666666;
+}
+
 .filter-toggle {
     width: 40px;
     height: 36px;
@@ -106,6 +137,43 @@ body {
 
 .filter-panel[hidden] {
     display: none;
+}
+
+.guided-filter[hidden],
+#regularFilter[hidden] {
+    display: none;
+}
+
+.guided-filter-kicker {
+    margin-bottom: 5px;
+    color: #555555;
+    font-size: 13px;
+}
+
+.guided-filter-step {
+    margin-bottom: 18px;
+    color: #008f87;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.guided-filter h2 {
+    margin-bottom: 14px;
+    font-size: 19px;
+}
+
+.guided-filter-choices {
+    margin-bottom: 4px;
+}
+
+.guided-filter-chip {
+    min-width: 88px;
+    text-align: center;
+}
+
+.guided-no-preference {
+    border-style: dashed;
+    color: #666666;
 }
 
 .filter-overlay {
@@ -204,6 +272,11 @@ body.filter-open .header {
     cursor: pointer;
 }
 
+.filter-apply:disabled {
+    background: #b8d7d5;
+    cursor: not-allowed;
+}
+
 .search-summary {
     min-height: 0;
     padding: 0 16px;
@@ -221,29 +294,6 @@ body.filter-open .header {
     padding-bottom: 56px;
     text-align: center;
     color: #777;
-}
-
-/* タブ */
-.tabs {
-    display: flex;
-    border-bottom: 1px solid #eeeeee;
-}
-
-.tab {
-    flex: 1;
-    text-align: center;
-    padding: 12px 0;
-    font-size: 14px;
-    color: #666;
-    cursor: pointer;
-}
-
-/* アクティブなタブ（みんなのキッチン） */
-.tab.active {
-    font-weight: bold;
-    color: #333;
-    border-bottom: 2px solid #333;
-    /* 黒い太線 */
 }
 
 /* -----------------------------
