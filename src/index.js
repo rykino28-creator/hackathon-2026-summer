@@ -11,7 +11,10 @@ import {
 const urlParams = new URLSearchParams(window.location.search);
 const searchProfile = loadSearchProfile(window.localStorage);
 const urlTags = urlParams.getAll('tag');
-const selectedTags = new Set(urlTags.length > 0 ? urlTags : searchProfile.tags);
+const DEFAULT_SEARCH_TAG = 'フライパン';
+const selectedTags = new Set(
+  urlTags.length > 0 ? urlTags : [DEFAULT_SEARCH_TAG, ...searchProfile.tags]
+);
 let favoritesOnly = urlParams.get('favorite') === '1';
 let guidedStepIndex = 0;
 let isGuidedMode = !searchProfile.completed;
@@ -34,6 +37,10 @@ const guidedFilterTitle = document.getElementById('guidedFilterTitle');
 const guidedFilterChoices = document.getElementById('guidedFilterChoices');
 const activeFilterList = document.getElementById('activeFilterList');
 const addFilterButton = document.getElementById('addFilterButton');
+const productTab = document.getElementById('productTab');
+const communityTab = document.getElementById('communityTab');
+const productPanel = document.getElementById('productPanel');
+const communityPanel = document.getElementById('communityPanel');
 
 searchInput.value = urlParams.get('q') || '';
 
@@ -205,6 +212,16 @@ function setFilterPanel(isOpen) {
   filterToggle.setAttribute('aria-expanded', String(isOpen));
 }
 
+function setContentTab(tabName) {
+  const isCommunity = tabName === 'community';
+  communityTab.classList.toggle('is-active', isCommunity);
+  communityTab.setAttribute('aria-selected', String(isCommunity));
+  productTab.classList.toggle('is-active', !isCommunity);
+  productTab.setAttribute('aria-selected', String(!isCommunity));
+  communityPanel.hidden = !isCommunity;
+  productPanel.hidden = isCommunity;
+}
+
 function openRegularFilters() {
   isGuidedMode = false;
   guidedFilter.hidden = true;
@@ -278,6 +295,8 @@ function completeGuidedOnboarding() {
 
 filterToggle.addEventListener('click', openRegularFilters);
 addFilterButton.addEventListener('click', openRegularFilters);
+productTab.addEventListener('click', () => setContentTab('product'));
+communityTab.addEventListener('click', () => setContentTab('community'));
 filterOverlay.addEventListener('click', () => {
   if (!isGuidedMode) setFilterPanel(false);
 });
@@ -299,9 +318,28 @@ filterClear.addEventListener('click', () => {
   renderActiveFilters();
   renderPosts();
 });
+
+function addSearchInputAsTag() {
+  const tag = searchInput.value.trim();
+  if (!tag) return false;
+
+  selectedTags.add(tag);
+  searchInput.value = '';
+  persistSelectedTags();
+  updateFilterButtons();
+  renderActiveFilters();
+  renderPosts();
+  return true;
+}
+
 searchForm.addEventListener('submit', (event) => {
   event.preventDefault();
-  renderPosts();
+  addSearchInputAsTag();
+});
+searchInput.addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  addSearchInputAsTag();
 });
 searchInput.addEventListener('input', renderPosts);
 document.addEventListener('keydown', (event) => {
@@ -309,6 +347,7 @@ document.addEventListener('keydown', (event) => {
 });
 
 createFilterGroups();
+setContentTab('community');
 renderActiveFilters();
 renderPosts();
 if (isGuidedMode) startGuidedOnboarding();

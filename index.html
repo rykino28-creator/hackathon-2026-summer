@@ -51,11 +51,22 @@
                     </div>
                 </section>
             </div>
+
+            <div class="content-tabs" role="tablist" aria-label="検索対象">
+                <button class="content-tab" id="productTab" type="button" role="tab" aria-selected="false"
+                    aria-controls="productPanel">商品一覧</button>
+                <button class="content-tab is-active" id="communityTab" type="button" role="tab"
+                    aria-selected="true" aria-controls="communityPanel">みんなのキッチン</button>
+            </div>
         </header>
 
         <main class="content">
-            <p class="search-summary" id="searchSummary" aria-live="polite"></p>
-            <div class="image-grid" id="imageGrid"></div>
+            <section class="content-tab-panel product-tab-panel" id="productPanel" role="tabpanel"
+                aria-labelledby="productTab" hidden></section>
+            <section class="content-tab-panel" id="communityPanel" role="tabpanel" aria-labelledby="communityTab">
+                <p class="search-summary" id="searchSummary" aria-live="polite"></p>
+                <div class="image-grid" id="imageGrid"></div>
+            </section>
         </main>
 
         <nav class="bottom-nav" aria-label="メインナビゲーション">

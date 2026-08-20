@@ -1,5 +1,9 @@
 import itemTempThumbnailUrl from '../images/item-temp-thumbnail.png';
-import { getSelectedProductIds, setSelectedProductIds } from './cart-selection.js';
+import {
+  addSelectedProductsToCart,
+  getSelectedProductIds,
+  setSelectedProductIds
+} from './cart-selection.js';
 import { posts, productsById } from './data.js';
 import {
   isPostFavorite,
@@ -27,6 +31,8 @@ const selectedCount = document.getElementById('selectedCount');
 const selectedTotal = document.getElementById('selectedTotal');
 const selectionChevron = document.getElementById('selectionChevron');
 const checkoutButton = document.getElementById('checkoutButton');
+const cartAddedMessage = document.getElementById('cartAddedMessage');
+let cartAddedMessageTimer;
 
 const selectedProductIds = new Set(
   getSelectedProductIds().filter((productId) => productsById[productId])
@@ -298,7 +304,18 @@ selectionSummary.addEventListener('click', () => {
 });
 
 checkoutButton.addEventListener('click', () => {
-  if (selectedProductIds.size > 0) window.location.href = 'cart.html';
+  if (selectedProductIds.size === 0) return;
+
+  addSelectedProductsToCart();
+  selectedProductIds.clear();
+  renderSelectedProducts();
+  refreshModalCartButtons();
+
+  window.clearTimeout(cartAddedMessageTimer);
+  cartAddedMessage.hidden = false;
+  cartAddedMessageTimer = window.setTimeout(() => {
+    cartAddedMessage.hidden = true;
+  }, 2400);
 });
 
 // ハッカソン開発中に写真上の座標を取得するための補助機能です。

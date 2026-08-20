@@ -277,6 +277,36 @@ body.filter-open .header {
     cursor: not-allowed;
 }
 
+.content-tabs {
+    display: flex;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.content-tab {
+    flex: 1;
+    padding: 12px 4px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: #ffffff;
+    color: #666666;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.content-tab.is-active {
+    border-bottom-color: #333333;
+    color: #333333;
+    font-weight: bold;
+}
+
+.content-tab-panel[hidden] {
+    display: none;
+}
+
+.product-tab-panel {
+    min-height: calc(100vh - 180px);
+}
+
 .search-summary {
     min-height: 0;
     padding: 0 16px;
@@ -1023,6 +1053,14 @@ body.filter-open .header {
     cursor: not-allowed;
 }
 
+.cart-added-message {
+    margin: 10px 0 0;
+    color: #007a74;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
 /* ==========================================
    カート画面
 ========================================== */
@@ -1041,7 +1079,7 @@ body.filter-open .header {
 }
 
 .cart-content {
-    padding: 22px 16px 190px;
+    padding: 22px 16px 164px;
 }
 
 .cart-content h2 {
@@ -1049,46 +1087,14 @@ body.filter-open .header {
     font-size: 18px;
 }
 
-.cart-guide {
-    margin-bottom: 18px;
-    color: #777777;
-    font-size: 13px;
-}
-
-.favorite-product-list {
+.cart-product-list {
     display: flex;
     gap: 12px;
     flex-direction: column;
 }
 
 .cart-product-option {
-    grid-template-columns: 76px minmax(0, 1fr) 94px;
-}
-
-.cart-product-option .option-cart-button {
-    min-width: 94px;
-    white-space: nowrap;
-}
-
-.cart-product-title {
-    display: flex;
-    gap: 6px;
-    align-items: flex-start;
-}
-
-.cart-product-title h3 {
-    flex: 1;
-    margin-top: 0;
-}
-
-.cart-product-favorite {
-    flex: 0 0 auto;
-    border: 0;
-    background: transparent;
-    color: #e9a100;
-    font-size: 22px;
-    line-height: 1;
-    cursor: pointer;
+    grid-template-columns: 76px minmax(0, 1fr);
 }
 
 .cart-empty {
@@ -1101,9 +1107,18 @@ body.filter-open .header {
     text-align: center;
 }
 
-.cart-selection-panel {
+.cart-order-bar {
+    position: fixed;
     bottom: 60px;
+    left: 50%;
     z-index: 110;
+    width: 100%;
+    max-width: 480px;
+    padding: 12px;
+    transform: translateX(-50%);
+    border-top: 1px solid #e5e5e5;
+    background: #ffffff;
+    box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.08);
 }
 
 .upload-header {
